@@ -1,13 +1,10 @@
 package com.myphisiohome.myphisiohome;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -23,14 +20,27 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
+import com.myphisiohome.myphisiohome.Clases.Ejercicio;
+import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
 import com.myphisiohome.myphisiohome.Clases.Paciente;
+import com.myphisiohome.myphisiohome.Clases.Plan;
+import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
 import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,7 +48,7 @@ import java.net.URL;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-public class PacienteActivity extends AppCompatActivity {
+public class PrincipalActivity extends AppCompatActivity {
 
     /**
      * Instancia del drawer
@@ -49,7 +59,8 @@ public class PacienteActivity extends AppCompatActivity {
     private TextView nombre;
     private CircleImageView imagenCircle;
     private String urlImagenes="http://myphisio.digitalpower.es/imagenes/";
-    private MyPhisioBBDDHelper pacienteBBDDHelper;
+    private MyPhisioBBDDHelper bdHelper;
+    private int idPlan;
 
 
     /**
@@ -67,9 +78,7 @@ public class PacienteActivity extends AppCompatActivity {
 
 
 
-
-
-
+        //
     }
     private void setNavigationDrawer(){
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -83,7 +92,7 @@ public class PacienteActivity extends AppCompatActivity {
         imagenCircle=(CircleImageView) headerView.findViewById(R.id.circle_image);
         SharedPreferences prefs = getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
         email.setText(prefs.getString("PREF_PACIENTE_EMAIL",""));
-        nombre.setText(prefs.getString("PREF_PACIENTE_NOMBRE","")+" "+prefs.getString("PREF_PACIENTE_APELLIDOS",""));
+        nombre.setText(prefs.getString("PREF_PACIENTE_NAME","")+" "+prefs.getString("PREF_PACIENTE_APELLIDOS",""));
         String image =prefs.getString("PREF_PACIENTE_IMAGE","vicente.png");
         new DownloadImageTask().execute(urlImagenes+image);
         seleccionarItem(navigationView.getMenu().getItem(0));
@@ -122,7 +131,8 @@ public class PacienteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         if (!drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            getMenuInflater().inflate(R.menu.nav_menu, menu);
+            //getMenuInflater().inflate(R.menu.nav_menu, menu);
+            getMenuInflater().inflate(R.menu.menu_actionbar, menu);
             return true;
         }
         return super.onCreateOptionsMenu(menu);
@@ -145,16 +155,16 @@ public class PacienteActivity extends AppCompatActivity {
             case R.id.nav_planes:
                 fragmentoGenerico = new FragmentPlanes();
                 break;
-            /*case R.id.item_cuenta:
-                fragmentoGenerico = new FragmentoCuenta();
+            case R.id.nav_usuario:
+                fragmentoGenerico = new FragmentPaciente();
                 break;
-            case R.id.item_categorias:
+            /*case R.id.item_categorias:
                 fragmentoGenerico = new FragmentoCategorias();
                 break;*/
             case R.id.nav_log_out:
-                SessionPrefs.get(PacienteActivity.this).logOut();
-                pacienteBBDDHelper= new MyPhisioBBDDHelper(getApplicationContext());
-                pacienteBBDDHelper.loogOut();
+                SessionPrefs.get(PrincipalActivity.this).logOut();
+                bdHelper= new MyPhisioBBDDHelper(getApplicationContext());
+                bdHelper.loogOut();
                 startActivity(new Intent(this, LoginActivity.class));
                 finish();
                 break;
@@ -221,6 +231,10 @@ public class PacienteActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
+
 
 
 }

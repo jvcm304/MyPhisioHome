@@ -172,6 +172,18 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                         null,
                         null);
     }
+    public Cursor getAllEjercicios() {
+
+        return getReadableDatabase()
+                .query(
+                        EjercicioBBDD.EjercicioEntry.TABLE_NAME,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null);
+    }
 
     public Cursor getPacienteById(int idPaciente) {
         Cursor c = getReadableDatabase().query(

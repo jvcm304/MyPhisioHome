@@ -12,7 +12,7 @@ public class EjerciciosPlanesBBDD {
 
         public static final String ID_EP = "idEP";
         public static final String ID_PLAN = "idPlan";
-        public static final String ID_EJERCICIO = "idEjercico";
+        public static final String ID_EJERCICIO = "idEjercicio";
         public static final String REPETICIONES = "repeticiones";
 
     }

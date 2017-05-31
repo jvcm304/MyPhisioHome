@@ -50,10 +50,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -92,7 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Redirección al Login
         if (SessionPrefs.get(LoginActivity.this).isLoggedIn(getApplicationContext())) {
-            startActivity(new Intent(this, PacienteActivity.class));
+            startActivity(new Intent(this, PrincipalActivity.class));
             finish();
             return;
         }
@@ -360,7 +357,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 fecNacimiento,peso,estatura,sexo);
                         pacienteBBDDHelper.savePaciente(paciente);
                         if(estado==1) {
-                            startPaciente();
+                            //startPaciente();
                         }
                     }catch (JSONException e){
                         Log.e("ServicioRest","Error!", e);
@@ -468,7 +465,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
     }
     private void startPaciente() {
-        startActivity(new Intent(this, PacienteActivity.class));
+        startActivity(new Intent(this, PrincipalActivity.class));
         finish();
     }
 }
