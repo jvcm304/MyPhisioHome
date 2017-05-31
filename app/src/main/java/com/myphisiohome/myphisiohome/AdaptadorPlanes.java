@@ -39,6 +39,7 @@ import org.json.JSONObject;
 
 public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHolder> {
 
+
     Context context;
     MyPhisioBBDDHelper pacienteBBDDHelper;
     Cursor cursor;
