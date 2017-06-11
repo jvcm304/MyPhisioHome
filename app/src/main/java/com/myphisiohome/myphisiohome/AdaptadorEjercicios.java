@@ -1,12 +1,9 @@
 package com.myphisiohome.myphisiohome;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,7 +14,6 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 
@@ -39,7 +35,7 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
     MyPhisioBBDDHelper pacienteBBDDHelper;
     Cursor cursor;
     int idPlan;
-    public CircleImageView imagen2;
+    public static ImageView imagen2;
     private String urlImagenes="http://myphisio.digitalpower.es/imagenes/";
     private static AdapterView.OnItemClickListener escucha;
 
@@ -52,8 +48,8 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // Campos respectivos de un item
         public TextView nombre;
-        public TextView categoria;
-        public CircleImageView imagen;
+        public TextView categoria, repeticiones;
+        public ImageView imagen;
         public int idPlan;
 
         Context c;
@@ -64,23 +60,23 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
             this.c=c;
             nombre = (TextView) v.findViewById(R.id.nombre_ejercicio);
             categoria = (TextView) v.findViewById(R.id.categoria_ejercicio);
-            imagen = (CircleImageView) v.findViewById(R.id.image_ejercicio);
+            imagen2 = (ImageView) v.findViewById(R.id.image_ejercicio);
+            repeticiones=(TextView) v.findViewById(R.id.repeticiones);
 
         }
 
     }
 
-    public AdaptadorEjercicios(Context c) {
+    public AdaptadorEjercicios(Context c,int idPlan) {
         this.context=c;
         this.pacienteBBDDHelper= new MyPhisioBBDDHelper(c);
-        cursor=pacienteBBDDHelper.getAllEjercicios();
+        cursor=pacienteBBDDHelper.getEjerciciosByPlan(idPlan);
         cursor.moveToFirst();
     }
 
     @Override
     public int getItemCount() {
-        pacienteBBDDHelper= new MyPhisioBBDDHelper(context);
-        return pacienteBBDDHelper.getAllEjercicios().getCount();
+        return cursor.getCount();
     }
 
 
@@ -94,27 +90,32 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
 
     @Override
     public void onBindViewHolder(AdaptadorEjercicios.ViewHolder viewHolder, int i) {
-        if(pacienteBBDDHelper.getAllEjercicios().moveToNext() && pacienteBBDDHelper.getAllEjercicios().getCount()>0){
 
-            /*Glide.with(viewHolder.itemView.getContext())
-                    .load(new DownloadImageTask().execute(urlImagenes+cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN))))
-                    .centerCrop()
-                    .into(viewHolder.imagen);*/
+        if(cursor.getCount()>i){
+
             viewHolder.nombre.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.NOMBRE)));
             viewHolder.categoria.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.CATEGORIA)));
-            //viewHolder.imagenS.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)));
+            if(cursor.getInt(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPO))==1){
+                viewHolder.repeticiones.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.REPETICIONES))+" segundos  ");
+            }else{
+                viewHolder.repeticiones.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.REPETICIONES))+" repeticiones  ");
+            }
 
+            new DownloadImageTask(imagen2).execute(urlImagenes+cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)));
+            cursor.moveToNext();
         }
 
     }
     class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {
 
-        //final ProgressDialog progressDialog = new ProgressDialog(main.this);
+        private  ImageView imagen;
+        public DownloadImageTask(ImageView imagen2) {
+            this.imagen=imagen2;
+        }
 
         protected void onPreExecute()
         {
-
             //imagen2.setImageDrawable(context.getResources().getDrawable(R.drawable.cargar2));
         }
 
@@ -129,7 +130,7 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
         protected void onPostExecute(Bitmap imagenB)
         {
 
-            imagen2.setImageBitmap(imagenB);
+            imagen.setImageBitmap(imagenB);
 
         }
 

@@ -50,11 +50,10 @@ public class FragmentPaciente extends android.support.v4.app.Fragment{
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.paciente_detail, container, false);
 
-        //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-        //setToolbar(view);// Añadir action bar
-        if (((AppCompatActivity) getActivity()).getSupportActionBar() != null) { // Habilitar up button
-            ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
+
+
+        setToolbar(view);// Añadir action bar
+
 
         email=(TextView) view.findViewById(R.id.email);
         fecNacimiento=(TextView) view.findViewById(R.id.fecNacimiento);
@@ -89,13 +88,19 @@ public class FragmentPaciente extends android.support.v4.app.Fragment{
         );
         return view;
     }
-    /*private void setToolbar(View view) {
+    private void setToolbar(View view) {
         // Añadir la Toolbar
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
         AppCompatActivity activity =(AppCompatActivity) getActivity();
+        activity.setSupportActionBar(toolbar);
+
+        //((AppCompatActivity) getActivity()).getSupportActionBar().hide();
+        if (activity.getSupportActionBar() != null) { // Habilitar up button
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         activity.getSupportActionBar();
 
-    }*/
+    }
 
 
     private void showSnackBar(String msg,View view) {

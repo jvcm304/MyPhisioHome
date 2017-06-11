@@ -111,6 +111,9 @@ public class Plan {
     public void setSeguimiento(ArrayList<Seguimiento> seguimiento) {
         this.seguimiento = seguimiento;
     }
+    public void addEjercicios(Ejercicio ejercicio){
+        this.ejercicios.add(ejercicio);
+    }
 
     public void setEjercicios(ArrayList<Ejercicio> ejercicios) {
         this.ejercicios = ejercicios;
@@ -123,6 +126,7 @@ public class Plan {
         values.put(PlanBBDD.PlanEntry.CATEGORIA, this.categoria);
         values.put(PlanBBDD.PlanEntry.DESCRIPCION, this.descipcion);
         values.put(PlanBBDD.PlanEntry.SERIES, this.series);
+        values.put(PlanBBDD.PlanEntry.DIAS, this.dias);
         values.put(PlanBBDD.PlanEntry.TIEMPO, this.tiempo);
         return values;
     }

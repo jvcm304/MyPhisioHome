@@ -58,7 +58,8 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 "  descripcion TEXT DEFAULT NULL," +
                 "  categoria TEXT NOT NULL," +
                 "  series INTEGER DEFAULT NULL," +
-                "  tiempo REAL DEFAULT NULL" +
+                "  tiempo REAL DEFAULT NULL," +
+                "  dias TEXT DEFAULT NULL" +
                 ")");
         db.execSQL("CREATE TABLE ejerciciosplanes (" +
                 "  idEP INTEGER PRIMARY KEY," +
@@ -137,6 +138,14 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 pUsuario.toContentValues());
 
     }
+    public void refrescar(){
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        sqLiteDatabase.execSQL("DELETE FROM ejercicios");
+        sqLiteDatabase.execSQL("DELETE FROM planes");
+        sqLiteDatabase.execSQL("DELETE FROM ejerciciosplanes");
+        sqLiteDatabase.execSQL("DELETE FROM planesusuarios");
+        sqLiteDatabase.execSQL("DELETE FROM seguimiento");
+    }
 
     public void loogOut(){
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
@@ -183,6 +192,24 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                         null,
                         null,
                         null);
+    }
+    public Cursor getEjerciciosByPlan(int idPlan) {
+        String[] args = new String[] {Integer.toString(idPlan)};
+        Cursor c = getReadableDatabase().rawQuery( "SELECT * FROM ejercicios, ejerciciosplanes WHERE ejerciciosplanes.idPlan=?"+
+                "AND ejercicios.idEjercicio=ejerciciosplanes.idEjercicio; ",  args);
+        return c;
+    }
+
+    public Cursor getPlanById(int idPlan) {
+        Cursor c = getReadableDatabase().query(
+                PlanBBDD.PlanEntry.TABLE_NAME,
+                null,
+                PlanBBDD.PlanEntry.ID_PLAN + " LIKE ?",
+                new String[]{Integer.toString(idPlan)},
+                null,
+                null,
+                null);
+        return c;
     }
 
     public Cursor getPacienteById(int idPaciente) {

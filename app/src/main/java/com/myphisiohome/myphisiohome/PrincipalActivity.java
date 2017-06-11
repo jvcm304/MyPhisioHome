@@ -22,23 +22,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
-import com.myphisiohome.myphisiohome.Clases.Ejercicio;
-import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
-import com.myphisiohome.myphisiohome.Clases.Paciente;
-import com.myphisiohome.myphisiohome.Clases.Plan;
-import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
 import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -46,6 +30,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
 
 
 public class PrincipalActivity extends AppCompatActivity {
@@ -72,7 +57,6 @@ public class PrincipalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_paciente);
-
         setToolbar(); // Setear Toolbar como action bar
         setNavigationDrawer();
 

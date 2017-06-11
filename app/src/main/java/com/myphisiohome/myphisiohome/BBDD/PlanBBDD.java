@@ -16,6 +16,7 @@ public class PlanBBDD {
         public static final String CATEGORIA = "categoria";
         public static final String SERIES = "series";
         public static final String TIEMPO = "tiempo";
+        public static final String DIAS = "dias";
 
 
     }

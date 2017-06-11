@@ -34,6 +34,8 @@ import android.widget.Toast;
 
 import com.myphisiohome.myphisiohome.API.MyPhisioApi;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
+import com.myphisiohome.myphisiohome.Clases.Ejercicio;
+import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
 import com.myphisiohome.myphisiohome.Clases.Paciente;
 import com.myphisiohome.myphisiohome.Clases.Plan;
 import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
@@ -71,6 +73,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
+    private EjerciciosTask ejerciciosTask=null;
 
     // UI references.
     private ImageView mLogoView;
@@ -80,7 +83,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private TextInputLayout mFloatLabelPassword;
     private View mProgressView;
     private View mLoginFormView;
-    private MyPhisioBBDDHelper pacienteBBDDHelper;
+    private static MyPhisioBBDDHelper pacienteBBDDHelper;
+    private Paciente paciente;
+    private PlanesUsuario planesUsuario;
+    private Plan plan;
+    private static EjercicioPlanes ejercicioPlanes;
+    private static Ejercicio ejercicio;
 
 
     @Override
@@ -135,6 +143,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    public EjerciciosTask getEjerciciosTask(int idPlan,Context context) {
+        return new EjerciciosTask(idPlan, context);
     }
 
     /**
@@ -286,7 +298,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private Integer estado;
         private String mensaje;
         //datos paciente
-        private Paciente paciente;
+        //private Paciente paciente;
         private int idPaciente;
         private String nombre;
         private String apellidos;
@@ -296,9 +308,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private float peso;
         private int estatura;
         private String sexo;
-        //datos planes paciente
-        private PlanesUsuario planesUsuario;
-        private Plan plan;
+        private EjerciciosTask taskEjercicios = null;
+        private ArrayList<Integer> idPlanes=new ArrayList<Integer>();
 
         UserLoginTask(String email, String password) {
             mEmail = email;
@@ -355,6 +366,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         imagen=jsonPaciente.getString("imagen");
                         paciente= new Paciente(idPaciente,nombre,apellidos,email,mPassword,imagen,
                                 fecNacimiento,peso,estatura,sexo);
+                        //comunicador.setPaciente(paciente);
                         pacienteBBDDHelper.savePaciente(paciente);
                         if(estado==1) {
                             //startPaciente();
@@ -382,6 +394,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 JSONObject planUsuario= planesPaciente.getJSONObject(i);
                                 int idPU=planUsuario.getInt("idPU");
                                 int idPlan=planUsuario.getInt("idPlan");
+                                String dias=planUsuario.getString("dias");
                                 //crear Plan
                                 HttpGet getPlanes =
                                         new HttpGet(URLAPI+"planes/"+idPlan);
@@ -396,27 +409,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     int series=planes.getInt("series");
                                     String descripcion=planes.getString("descripcion");
                                     String categoria=planes.getString("categoria");
-                                    plan=new Plan(idPlan2,nombre,descripcion,categoria,series,tiempo);
+                                    plan=new Plan(idPlan2,nombre,descripcion,categoria,series,tiempo,dias);
+                                    idPlanes.add(idPlan2);
                                     pacienteBBDDHelper.savePlanes(plan);
                                 }
                                 //
                                 int idPaciente=planUsuario.getInt("idPaciente");
                                 float tiempo=Float.valueOf(planUsuario.getString("tiempo"));
                                 int series=planUsuario.getInt("series");
-                                String dias=planUsuario.getString("dias");
+
                                 planesUsuario=new PlanesUsuario(idPU,idPaciente,idPlan,tiempo,series,dias);
                                 pacienteBBDDHelper.savePlanesUsuarios(planesUsuario);
 
                             }
                         }
                         //
-
-
                     }catch (JSONException e){
                         Log.e("ServicioRest","Error!", e);
                     }
-
-
                 }
 
             }
@@ -433,7 +443,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onPostExecute(final Integer success) {
             mAuthTask = null;
             showProgress(false);
+            for(int i=0;i<idPlanes.size();i++){
+                taskEjercicios= new EjerciciosTask(idPlanes.get(i),getApplicationContext());
+                taskEjercicios.execute();
 
+            }
 
             switch (success) {
                 case 1:
@@ -461,10 +475,130 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
 
     }
+
+
+
+    public class EjerciciosTask extends AsyncTask<Void, Void, Integer> {
+
+        private Integer estado;
+        private String mensaje;
+
+        //datos ejercicios planes
+        //private EjercicioPlanes ejercicioPlanes;
+        //private Ejercicio ejercicio;
+        private int resul;
+        private int idPlan;
+        private Context context;
+
+        EjerciciosTask(int idPlan,Context context) {
+            this.context=context;
+            this.idPlan=idPlan;
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            // TODO: attempt authentication against a network service.
+
+            pacienteBBDDHelper= new MyPhisioBBDDHelper(context);
+            //
+            int resul;
+            String URLAPI="http://myphisio.digitalpower.es/v1/";
+            HttpClient httpClient = new DefaultHttpClient();
+
+            HttpGet get =
+                    new HttpGet(URLAPI+"ejerciciosPlanes/"+idPlan);
+
+            get.setHeader("content-type", "application/json");
+
+            try
+            {
+
+                HttpResponse resp = httpClient.execute(get);
+                String respStr = EntityUtils.toString(resp.getEntity());
+                JSONObject respJSON = new JSONObject(respStr);
+                estado = respJSON.getInt("estado");
+                resul=estado;
+
+                if(estado!=1) {
+                    mensaje = respJSON.getString("mensaje");
+
+
+                }else if(estado==1){
+                    try{
+                        JSONArray ejerciciosPlanesJSON = respJSON.getJSONArray("datos");
+                        for (int i=0; i<ejerciciosPlanesJSON.length() ;i++) {
+                            JSONObject ejercicioPlan =ejerciciosPlanesJSON.getJSONObject(i);
+                            int idEP=ejercicioPlan.getInt("idEP");
+                            int idEjercicio=ejercicioPlan.getInt("idEjercicio");
+                            float repeticiones=Float.valueOf(ejercicioPlan.getString("repeticiones"));
+                            ejercicioPlanes =new EjercicioPlanes(idEP,idPlan,idEjercicio,repeticiones);
+                            pacienteBBDDHelper.saveEjerciciosPlanes(ejercicioPlanes);
+                            //Ejercicios
+                            HttpGet getEjercicios=new HttpGet(URLAPI+"ejercicios/");
+                            getEjercicios.setHeader("content-type", "application/json");
+                            HttpResponse resp2 = httpClient.execute(getEjercicios);
+                            String respStr2 = EntityUtils.toString(resp2.getEntity());
+
+                            if(estado!=1) {
+                                mensaje = respJSON.getString("mensaje");
+
+
+                            }else if(estado==1){
+                                try{
+                                    //JSONArray ejerciciosJSON = respJSON2.getJSONArray("datos");
+                                    JSONArray ejerciciosJSON = new JSONArray(respStr2);
+                                    for (int j=0; j<ejerciciosJSON.length() ;j++) {
+                                        JSONObject ejercicioObj =ejerciciosJSON.getJSONObject(j);
+                                        int idE=ejercicioObj.getInt("idEjercicio");
+
+                                        float repe;
+                                        if(idEjercicio==idE){
+                                            ejercicio= new Ejercicio(idEjercicio,ejercicioObj.getString("nombre"),
+                                                    ejercicioObj.getString("descripcion"),
+                                                    ejercicioObj.getString("tips"),
+                                                    ejercicioObj.getString("categoria"),
+                                                    ejercicioObj.getString("imagen"),
+                                                    ejercicioObj.getInt("tipo"),
+                                                    Float.valueOf(ejercicioObj.getString("repetiones")));
+                                            //plan.addEjercicios(ejercicio);
+                                            pacienteBBDDHelper.saveEjercicio(ejercicio);
+                                        }
+                                    }
+                                }catch (JSONException e){
+                                    Log.e("ServicioRest","Error!", e);
+                                }
+                            }
+
+                        }
+                    }catch (JSONException e){
+                        Log.e("ServicioRest","Error!", e);
+                    }
+                }
+
+            }
+            catch(Exception ex)
+            {
+                Log.e("ServicioRest","Error!", ex);
+                resul = 0;
+            }
+
+            return resul;
+        }
+
+        @Override
+        protected void onPostExecute(final Integer success) {
+
+        }
+    }
+    //
+
+
+
     private void showLoginError(String error) {
         Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
     }
     private void startPaciente() {
+
         startActivity(new Intent(this, PrincipalActivity.class));
         finish();
     }

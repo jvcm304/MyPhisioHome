@@ -36,7 +36,7 @@ public class Paciente {
     private float peso;
     private int estatura;
     private String sexo;
-    private ArrayList<Plan> Planes;
+    private ArrayList<Plan> planes;
     public Paciente(){
 
     }
@@ -100,7 +100,7 @@ public class Paciente {
     }
 
     public ArrayList<Plan> getPlanes() {
-        return Planes;
+        return planes;
     }
 
     public void setIdPaciente(int idPaciente) {
@@ -143,8 +143,12 @@ public class Paciente {
         this.sexo = sexo;
     }
 
+    public void addPlan(Plan plan){
+        this.planes.add(plan);
+    }
+
     public void setPlanes(ArrayList<Plan> planes) {
-        this.Planes = planes;
+        this.planes = planes;
     }
 
     public ContentValues toContentValues() {

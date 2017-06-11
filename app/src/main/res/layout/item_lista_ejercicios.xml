@@ -18,19 +18,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <ImageView
             android:id="@+id/image_ejercicio"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="24dp" />
+            android:layout_marginLeft="10dp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/image_ejercicio"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="24dp">
+            android:layout_marginLeft="10dp">
 
             <TextView
                 android:id="@+id/nombre_ejercicio"
@@ -50,6 +50,16 @@
                 android:layout_below="@+id/nombre_ejercicio"
                 android:layout_marginTop="8dp"
                 android:text="#pop #rock #news"
+                android:textColor="@color/accentColor" />
+            <TextView
+                android:id="@+id/repeticiones"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right|center_horizontal"
+                android:layout_alignLeft="@+id/nombre_ejercicio"
+                android:layout_below="@+id/nombre_ejercicio"
+                android:layout_marginTop="-4dp"
+                android:text="Repeticiones: 2   "
                 android:textColor="@color/accentColor" />
 
         </RelativeLayout>

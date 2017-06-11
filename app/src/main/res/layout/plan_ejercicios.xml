@@ -42,6 +42,29 @@
                 android:layout_marginBottom="62dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 android:textColor="@android:color/white" />
+            <TextView
+                android:id="@+id/dias_plan_detail"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:gravity="right|center_horizontal"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:text="Medium Text"
+                android:layout_marginBottom="86dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/white" />
+            <TextView
+                android:id="@+id/vueltas"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left|bottom"
+                android:paddingBottom="16dp"
+                android:paddingLeft="16dp"
+                android:text="Vueltas: "
+                android:layout_marginBottom="110dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/white" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -64,6 +87,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"

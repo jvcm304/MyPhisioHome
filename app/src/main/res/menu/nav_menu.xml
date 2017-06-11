@@ -7,7 +7,7 @@
             android:checked="true"
             android:icon="@drawable/ic_home"
             android:title="@string/planes_item" />
-        <item
+        <!--- <item
             android:id="@+id/nav_productos"
             android:icon="@drawable/ic_store"
             android:title="@string/planes_item" />
@@ -22,7 +22,7 @@
         <item
             android:id="@+id/nav_facturas"
             android:icon="@drawable/ic_file_document"
-            android:title="@string/facturas_item" />
+            android:title="@string/facturas_item" /> -->
 
         <!-- Sección de configuración -->
         <item
