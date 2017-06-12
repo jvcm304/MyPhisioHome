@@ -1,9 +1,8 @@
 package com.myphisiohome.myphisiohome;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -11,19 +10,22 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
+import com.myphisiohome.myphisiohome.BBDD.PlanBBDD;
+import com.myphisiohome.myphisiohome.Clases.Ejercicio;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -34,59 +36,46 @@ import java.net.URL;
  * Created by Vicente on 31/5/17.
  */
 
-public class FragmentPaciente extends android.support.v4.app.Fragment{
+public class FragmentEjercicioP extends android.support.v4.app.Fragment{
 
-    private TextView email;
-    private TextView fecNacimiento;
-    private TextView sexo;
-    private TextView peso;
-    private TextView estatura;
+    private TextView categoria;
+    private TextView descripcion;
+    private TextView tips;
     private String urlImagenes="http://myphisio.digitalpower.es/imagenes/";
     private ImageView imagen;
 
-    public FragmentPaciente() {
+
+    public FragmentEjercicioP() {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.paciente_detail, container, false);
+        View view = inflater.inflate(R.layout.ejercicio_detail_paciente, container, false);
 
 
 
         setToolbar(view);// Añadir action bar
 
 
-        email=(TextView) view.findViewById(R.id.email);
-        fecNacimiento=(TextView) view.findViewById(R.id.fecNacimiento);
-        sexo=(TextView) view.findViewById(R.id.sexo);
-        peso=(TextView) view.findViewById(R.id.peso);
-        estatura=(TextView) view.findViewById(R.id.estatura);
-        imagen=(ImageView) view.findViewById(R.id.image_paralax);
+        categoria=(TextView) view.findViewById(R.id.categoria_ejercicioP_detail);
+        descripcion=(TextView) view.findViewById(R.id.descripcion_ejercicioP_detail);
+        tips=(TextView) view.findViewById(R.id.tips_ejercicioP_detail);
+        imagen=(ImageView) view.findViewById(R.id.imagen_ejercicioP_detail);
         CollapsingToolbarLayout collapser =
-                (CollapsingToolbarLayout) view.findViewById(R.id.collapser);
-        SharedPreferences prefs = this.getActivity().getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
+                (CollapsingToolbarLayout) view.findViewById(R.id.collapser_ejercicoP);
+        collapser.setTitle(getArguments().getString("nombre"));
+        categoria.setText(getArguments().getString("categoria"));
+        String image=getArguments().getString("imagen");
+        tips.setText(getArguments().getString("tips"));
+        descripcion.setText(getArguments().getString("descripcion"));
 
-        String titulo=prefs.getString("PREF_PACIENTE_NAME","")+" "+prefs.getString("PREF_PACIENTE_APELLIDOS","");
-        collapser.setTitle(titulo); // Cambiar título
-        email.setText(prefs.getString("PREF_PACIENTE_EMAIL",""));
-        fecNacimiento.setText(prefs.getString("PREF_PACIENTE_NACIMIENTO",""));
-        sexo.setText(prefs.getString("PREF_PACIENTE_SEXO",""));
-        estatura.setText(String.valueOf(prefs.getInt("PREF_PACIENTE_ESTATURA",0)));
-        peso.setText(String.valueOf((int) prefs.getFloat("PREF_PACIENTE_PESO",Float.parseFloat("0.0"))));
-        String image=prefs.getString("PREF_PACIENTE_IMAGE","");
+
+
         new DownloadImageTask().execute(urlImagenes+image);
 
 
         // Setear escucha al FAB
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        showSnackBar("Configuracion", v);
-                    }
-                }
-        );
+
         return view;
     }
     private void setToolbar(View view) {
@@ -105,8 +94,9 @@ public class FragmentPaciente extends android.support.v4.app.Fragment{
 
 
     private void showSnackBar(String msg,View view) {
-
-        startActivity(new Intent(getActivity(),AddEditPacienteActivity.class));
+        Snackbar
+                .make(view, msg, Snackbar.LENGTH_LONG)
+                .show();
     }
     class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {

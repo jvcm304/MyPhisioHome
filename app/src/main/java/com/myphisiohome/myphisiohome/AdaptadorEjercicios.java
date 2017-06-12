@@ -10,12 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
+
 
 
 import java.io.IOException;
@@ -31,18 +31,21 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicios.ViewHolder> {
 
-    Context context;
-    MyPhisioBBDDHelper pacienteBBDDHelper;
-    Cursor cursor;
-    int idPlan;
+    private Context context;
+    private MyPhisioBBDDHelper pacienteBBDDHelper;
+    private Cursor cursor;
+    private int idPlan;
     public static ImageView imagen2;
     private String urlImagenes="http://myphisio.digitalpower.es/imagenes/";
-    private static AdapterView.OnItemClickListener escucha;
+    private static OnItemClickListener onItemClickListener;
 
     public static interface OnItemClickListener {
-        public void onItemClick(AdaptadorPlanes.ViewHolder view, int position);
+        void onItemClick(ViewHolder view, int position);
 
-        void onItemClick(View view, int position);
+        void onItemClick(View view, int position, Cursor ejercicio);
+    }
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        onItemClickListener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -50,18 +53,36 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
         public TextView nombre;
         public TextView categoria, repeticiones;
         public ImageView imagen;
-        public int idPlan;
+        public int idPlan2;
+        MyPhisioBBDDHelper pacienteBBDDHelper;
+        Cursor cursor,cursor2;
 
         Context c;
 
 
-        public ViewHolder(View v, Context c) {
+        public ViewHolder(View v, Context c,int idPlan) {
             super(v);
             this.c=c;
+            this.idPlan2=idPlan;
+            pacienteBBDDHelper= new MyPhisioBBDDHelper(c);
             nombre = (TextView) v.findViewById(R.id.nombre_ejercicio);
             categoria = (TextView) v.findViewById(R.id.categoria_ejercicio);
             imagen2 = (ImageView) v.findViewById(R.id.image_ejercicio);
             repeticiones=(TextView) v.findViewById(R.id.repeticiones);
+            cursor=pacienteBBDDHelper.getEjerciciosByPlan(idPlan2);
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position  = ViewHolder.super.getAdapterPosition();
+                    cursor.moveToPosition(position);
+                    if(cursor.moveToPosition(position)){
+
+                        cursor2=pacienteBBDDHelper.getEjercicioById(cursor.getInt(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.ID_EJERCICIO)));
+                        onItemClickListener.onItemClick(view,position,cursor2);
+
+                    }
+                }
+            });
 
         }
 
@@ -69,6 +90,7 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
 
     public AdaptadorEjercicios(Context c,int idPlan) {
         this.context=c;
+        this.idPlan=idPlan;
         this.pacienteBBDDHelper= new MyPhisioBBDDHelper(c);
         cursor=pacienteBBDDHelper.getEjerciciosByPlan(idPlan);
         cursor.moveToFirst();
@@ -85,7 +107,7 @@ public class AdaptadorEjercicios extends RecyclerView.Adapter<AdaptadorEjercicio
     public AdaptadorEjercicios.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.item_lista_ejercicios, viewGroup, false);
-        return new AdaptadorEjercicios.ViewHolder(v,context);
+        return new AdaptadorEjercicios.ViewHolder(v,context,idPlan);
     }
 
     @Override

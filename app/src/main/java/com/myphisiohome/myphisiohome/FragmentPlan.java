@@ -1,11 +1,13 @@
 package com.myphisiohome.myphisiohome;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
 
 /**
  * Created by Vicente on 31/5/17.
@@ -84,6 +88,37 @@ public class FragmentPlan extends Fragment {
                     }
                 }
         );
+        ((AdaptadorEjercicios) adaptador).setOnItemClickListener(new AdaptadorEjercicios.OnItemClickListener() {
+
+
+            @Override
+            public void onItemClick(AdaptadorEjercicios.ViewHolder view, int position) {
+
+            }
+
+            @Override
+            public void onItemClick(View view, int position, Cursor ejercicio) {
+
+                Fragment fragment=new FragmentEjercicioP();
+                Bundle args = new Bundle();
+                ejercicio.moveToFirst();
+                args.putString("nombre",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.NOMBRE)));
+                args.putString("categoria",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.CATEGORIA)));
+                args.putString("descripcion",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.DESCRIPCION)));
+                args.putString("tips",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPS)));
+                args.putString("imagen",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)));
+
+                fragment.setArguments(args);
+
+                FragmentTransaction transaction=getFragmentManager().beginTransaction();
+
+                transaction.replace(R.id.main_content, fragment);
+                //transaction.addToBackStack(null);
+                transaction.commit();
+
+
+            }
+        });
 
 
         return view;

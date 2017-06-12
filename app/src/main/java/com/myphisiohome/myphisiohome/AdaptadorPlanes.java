@@ -31,8 +31,6 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
     Context context;
     MyPhisioBBDDHelper pacienteBBDDHelper;
     Cursor cursor;
-    int idPlan;
-    FragmentManager fragmentManager;
     private static OnItemClickListener onItemClickListener;
 
 

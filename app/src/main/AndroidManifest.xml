@@ -29,6 +29,9 @@
         <activity android:name=".PrincipalActivity">
 
         </activity>
+        <activity android:name=".AddEditPacienteActivity">
+
+        </activity>
     </application>
 
 </manifest>
