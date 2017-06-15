@@ -249,5 +249,15 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 PacienteBBDD.PacienteEntry.ID_PACIENTE + " LIKE ?",
                 new String[]{Integer.toString(idPaciente)});
     }
+    public int updatePaciente2(Paciente paciente, int idPaciente) {
+        String sql=("UPDATE pacientes SET nombre='"+paciente.getNombre()
+                +"', email='"+paciente.getEmail()+"',fecNacimiento='"+paciente.getFecNacimiento()
+                +"',estatura='"+paciente.getEstatura()+"',imagen='"+paciente.getImagen()
+                +"',sexo='"+paciente.getSexo()+"',peso='"+paciente.getPeso()
+                +"' WHERE idPaciente="+idPaciente);
+        //Log.e("SQL:   ",sql  );
+        getWritableDatabase().execSQL(sql);
+        return idPaciente;
+    }
 
 }

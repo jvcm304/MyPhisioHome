@@ -305,7 +305,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private String email;
         private String imagen;
         private String fecNacimiento;
-        private float peso;
+        private String peso;
         private int estatura;
         private String sexo;
         private EjerciciosTask taskEjercicios = null;
@@ -360,7 +360,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         email = jsonPaciente.getString("email");
                         fecNacimiento = jsonPaciente.getString("fecNacimiento");
                         String sPeso = jsonPaciente.getString("peso");
-                        peso = Float.parseFloat(sPeso);
+                        peso = sPeso;
                         sexo = jsonPaciente.getString("sexo");
                         estatura = jsonPaciente.getInt("estatura");
                         imagen=jsonPaciente.getString("imagen");
@@ -468,7 +468,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     showLoginError(mensaje);
                     break;
                 case 0:
-                    showLoginError(getString(R.string.error_server));
+                    showLoginError(mensaje);
                     break;
             }
         }

@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -66,15 +67,18 @@ public class FragmentPaciente extends android.support.v4.app.Fragment{
                 (CollapsingToolbarLayout) view.findViewById(R.id.collapser);
         SharedPreferences prefs = this.getActivity().getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
 
-        String titulo=prefs.getString("PREF_PACIENTE_NAME","")+" "+prefs.getString("PREF_PACIENTE_APELLIDOS","");
+        String titulo=prefs.getString("PREF_PACIENTE_NAME","");
         collapser.setTitle(titulo); // Cambiar título
         email.setText(prefs.getString("PREF_PACIENTE_EMAIL",""));
         fecNacimiento.setText(prefs.getString("PREF_PACIENTE_NACIMIENTO",""));
         sexo.setText(prefs.getString("PREF_PACIENTE_SEXO",""));
         estatura.setText(String.valueOf(prefs.getInt("PREF_PACIENTE_ESTATURA",0)));
-        peso.setText(String.valueOf((int) prefs.getFloat("PREF_PACIENTE_PESO",Float.parseFloat("0.0"))));
+        peso.setText(prefs.getString("PREF_PACIENTE_PESO",""));
         String image=prefs.getString("PREF_PACIENTE_IMAGE","");
-        new DownloadImageTask().execute(urlImagenes+image);
+        File file = new File(getContext().getFilesDir().getPath()+"/app_fotoPerfil/foto.png");
+        Bitmap bitmap = BitmapFactory.decodeFile("/data/user/0/com.myphisiohome.myphisiohome/app_fotoPerfil/foto.png");//getContext().getPackageName()+"/app_fotoPerfil/foto.png");
+        imagen.setImageBitmap(bitmap);
+        //new DownloadImageTask().execute(urlImagenes+image);
 
 
         // Setear escucha al FAB
@@ -107,58 +111,6 @@ public class FragmentPaciente extends android.support.v4.app.Fragment{
     private void showSnackBar(String msg,View view) {
 
         startActivity(new Intent(getActivity(),AddEditPacienteActivity.class));
-    }
-    class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
-    {
-
-        //final ProgressDialog progressDialog = new ProgressDialog(main.this);
-
-        protected void onPreExecute()
-        {
-            imagen.setImageDrawable(getResources().getDrawable(R.drawable.material_background3));
-        }
-
-        protected Bitmap doInBackground(String... urls)
-        {
-            Log.d("DEBUG", "drawable");
-
-            return downloadImage(urls[0]);
-
-        }
-
-        protected void onPostExecute(Bitmap imagenBitmap)
-        {
-            Drawable draImage=new BitmapDrawable(imagenBitmap);
-            imagen.setImageDrawable(draImage);
-
-        }
-
-        /**
-         * Devuelve una imagen desde una URL
-         *
-         * @return Una imagen
-         */
-        private Bitmap downloadImage(String imageUrlS)
-        {
-            try
-            {
-                URL imageUrl = new URL(imageUrlS);
-                HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-                conn.connect();
-
-                return BitmapFactory.decodeStream(conn.getInputStream());
-            }
-            catch (MalformedURLException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-        }
     }
 
 

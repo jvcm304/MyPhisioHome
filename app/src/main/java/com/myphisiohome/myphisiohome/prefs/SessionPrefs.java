@@ -55,10 +55,10 @@ public class SessionPrefs {
             editor.putInt(PREF_PACIENTE_ID, paciente.getIdPaciente());
             editor.putString(PREF_PACIENTE_IMAGE, paciente.getImagen());
             editor.putString(PREF_PACIENTE_APELLIDOS, paciente.getApellidos());
-            editor.putString(PREF_PACIENTE_NACIMIENTO, paciente.getFecNacimiento());
-            editor.putFloat(PREF_PACIENTE_PESO, paciente.getPeso());
+            editor.putString(PREF_PACIENTE_PESO, paciente.getPeso());
             editor.putInt(PREF_PACIENTE_ESTATURA, paciente.getEstatura());
             editor.putString(PREF_PACIENTE_SEXO, paciente.getSexo());
+            editor.putString(PREF_PACIENTE_NACIMIENTO, paciente.getFecNacimiento());
             editor.putBoolean(PREF_PACIENTE_LOGGED, true);
             //editor.putString(PREF_AFFILIATE_GENDER, paciente.getGender());
             //editor.putString(PREF_AFFILAITE_TOKEN, paciente.getToken());
@@ -77,9 +77,10 @@ public class SessionPrefs {
         editor.putString(PREF_PACIENTE_APELLIDOS, null);
         editor.putInt(PREF_PACIENTE_ID, -1);
         editor.putString(PREF_PACIENTE_NACIMIENTO, null);
-        editor.putFloat(PREF_PACIENTE_PESO, 0);
+        editor.putString(PREF_PACIENTE_PESO, null);
         editor.putInt(PREF_PACIENTE_ESTATURA, 0);
         editor.putString(PREF_PACIENTE_SEXO, null);
+        editor.putString(PREF_PACIENTE_NACIMIENTO, null);
         editor.putBoolean(PREF_PACIENTE_LOGGED, false);
         //editor.putString(PREF_AFFILAITE_TOKEN, null);
         editor.commit();
