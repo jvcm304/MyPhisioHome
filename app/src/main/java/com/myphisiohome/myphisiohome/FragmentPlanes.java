@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 
+import com.myphisiohome.myphisiohome.AsyncTask.EjerciciosTask;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.BBDD.PlanBBDD;
 import com.myphisiohome.myphisiohome.Clases.Ejercicio;
@@ -221,7 +222,7 @@ public class FragmentPlanes extends Fragment   {
             LoginActivity login = new LoginActivity();
 
             for(int i=0;i<idPlanes.size();i++){
-                LoginActivity.EjerciciosTask ejerciciosTask = login.getEjerciciosTask(idPlanes.get(i),getActivity());
+                EjerciciosTask ejerciciosTask = login.getEjerciciosTask(idPlanes.get(i),getActivity());
                 ejerciciosTask.execute();
 
             }

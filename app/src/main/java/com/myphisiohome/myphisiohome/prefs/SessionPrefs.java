@@ -26,6 +26,7 @@ public class SessionPrefs {
 
     public static final String PREF_PACIENTE_TOKEN = "PREF_PACIENTE_TOKEN";
     public static final String PREF_PACIENTE_LOGGED = "PREF_PACIENTE_LOGGED";
+    public static final String PREF_ADMINISTRADOR_LOGGED = "PREF_ADMINISTRADOR_LOGGED";
     private boolean mIsLoggedIn = false;
     private final SharedPreferences mPrefs;
 
@@ -82,8 +83,21 @@ public class SessionPrefs {
         editor.putString(PREF_PACIENTE_SEXO, null);
         editor.putString(PREF_PACIENTE_NACIMIENTO, null);
         editor.putBoolean(PREF_PACIENTE_LOGGED, false);
+        editor.putBoolean(PREF_ADMINISTRADOR_LOGGED, false);
         //editor.putString(PREF_AFFILAITE_TOKEN, null);
         editor.commit();
     }
+    public void logInAdministrador() {
+        SharedPreferences.Editor editor = mPrefs.edit();
+        editor.putBoolean(PREF_ADMINISTRADOR_LOGGED, true);
+        mIsLoggedIn = true;
+        editor.commit();
 
+    }
+
+    public boolean isLoggedInAdministrador(Context applicationContext) {
+        SharedPreferences prefs=applicationContext.getApplicationContext()
+                .getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean(PREF_ADMINISTRADOR_LOGGED,false);
+    }
 }

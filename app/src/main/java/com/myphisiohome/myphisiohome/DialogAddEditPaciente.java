@@ -10,7 +10,6 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
@@ -25,22 +24,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.myphisiohome.myphisiohome.AsyncTask.SubirArchivoHttp;
+import com.myphisiohome.myphisiohome.AsyncTask.UpdatePacienteServidor;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.Clases.Paciente;
 import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
