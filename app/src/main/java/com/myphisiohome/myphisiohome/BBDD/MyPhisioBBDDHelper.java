@@ -12,6 +12,7 @@ import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
 import com.myphisiohome.myphisiohome.Clases.Paciente;
 import com.myphisiohome.myphisiohome.Clases.Plan;
 import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
+import com.myphisiohome.myphisiohome.Clases.Seguimiento;
 
 /**
  * Created by Vicente on 30/5/17.
@@ -100,6 +101,9 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
     }
     public long savePaciente(Paciente paciente) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+
+
+
         return sqLiteDatabase.insert(
                 PacienteBBDD.PacienteEntry.TABLE_NAME,
                 null,
@@ -113,6 +117,13 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 null,
                 ejercicio.toContentValues());
 
+    }
+    public long saveSeguimiento(Seguimiento seguimiento) {
+        SQLiteDatabase sqLiteDatabase = getWritableDatabase();
+        return sqLiteDatabase.insert(
+                SeguimientoBBDD.SeguimientoEntry.TABLE_NAME,
+                null,
+                seguimiento.toContentValues());
     }
     public long savePlanes(Plan plan) {
         SQLiteDatabase sqLiteDatabase = getWritableDatabase();
@@ -199,6 +210,12 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 "AND ejercicios.idEjercicio=ejerciciosplanes.idEjercicio; ",  args);
         return c;
     }
+    public Cursor getPlanesByPaciente(int idPaciente) {
+        String[] args = new String[] {Integer.toString(idPaciente)};
+        Cursor c = getReadableDatabase().rawQuery( "SELECT * FROM planes, planesusuarios WHERE planesusuarios.idPaciente=?"+
+                "AND planes.idPlan=planesusuarios.idPlan; ",  args);
+        return c;
+    }
 
     public Cursor getPlanById(int idPlan) {
         Cursor c = getReadableDatabase().query(
@@ -241,14 +258,14 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 PacienteBBDD.PacienteEntry.ID_PACIENTE + " LIKE ?",
                 new String[]{Integer.toString(idPaciente)});
     }
-
-    public int updatePaciente(Paciente paciente, int idPaciente) {
-        return getWritableDatabase().update(
-                PacienteBBDD.PacienteEntry.TABLE_NAME,
-                paciente.toContentValues(),
-                PacienteBBDD.PacienteEntry.ID_PACIENTE + " LIKE ?",
-                new String[]{Integer.toString(idPaciente)});
+    public int deleteEjercicio(int idEjercicio) {
+        return getWritableDatabase().delete(
+                EjercicioBBDD.EjercicioEntry.TABLE_NAME,
+                EjercicioBBDD.EjercicioEntry.ID_EJERCICIO + " LIKE ?",
+                new String[]{Integer.toString(idEjercicio)});
     }
+
+
     public int updatePaciente2(Paciente paciente, int idPaciente) {
         String sql=("UPDATE pacientes SET nombre='"+paciente.getNombre()
                 +"', email='"+paciente.getEmail()+"',fecNacimiento='"+paciente.getFecNacimiento()
@@ -258,6 +275,15 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
         //Log.e("SQL:   ",sql  );
         getWritableDatabase().execSQL(sql);
         return idPaciente;
+    }
+    public int getIdPU(int idPaciente, int idPlan){
+        String[] args = new String[2];
+        args[0]=Integer.toString(idPaciente);
+        args[1]=Integer.toString(idPlan);
+        Cursor c = getReadableDatabase().rawQuery( "SELECT idPU FROM planesusuarios WHERE idPaciente=?"+
+                "AND idPlan=?",  args);
+        c.moveToFirst();
+        return c.getInt(c.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.ID_PU));
     }
 
 }

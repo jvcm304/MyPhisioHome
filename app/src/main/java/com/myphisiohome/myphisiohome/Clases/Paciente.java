@@ -40,10 +40,23 @@ public class Paciente {
     public Paciente(){
 
     }
-    public Paciente (int idPaciente, String nombre, String apellidos,String email, String password,
+    public Paciente (int idPaciente, String nombre, String email, String password,
                      String imagen,String fecNacimiento,String peso, int estatura, String sexo){
 
         this.idPaciente=idPaciente;
+        this.nombre=nombre;
+        this.apellidos=apellidos;
+        this.email=email;
+        this.password=password;
+        this.imagen=imagen;
+        this.fecNacimiento=fecNacimiento;
+        this.estatura=estatura;
+        this.peso=peso;
+        this.sexo=sexo;
+    }
+    public Paciente ( String nombre, String email, String password,
+                     String imagen,String fecNacimiento,String peso, int estatura, String sexo){
+
         this.nombre=nombre;
         this.apellidos=apellidos;
         this.email=email;

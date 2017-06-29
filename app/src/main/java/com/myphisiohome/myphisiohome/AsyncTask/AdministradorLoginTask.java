@@ -3,8 +3,10 @@ package com.myphisiohome.myphisiohome.AsyncTask;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.widget.Toast;
 
+import com.myphisiohome.myphisiohome.AdministradorActivity;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.Clases.Ejercicio;
 import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
@@ -44,7 +46,7 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
     private Seguimiento seguimiento;
     private MyPhisioBBDDHelper myPhisioBBDDHelper;
     private ArrayList<Integer> idPlanes=new ArrayList<Integer>();
-    EjerciciosTask taskEjercicios=null;
+    GetEjerciciosTask taskEjercicios=null;
 
 
     private int estado;
@@ -82,7 +84,7 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
                 String sexo = pacienteJSON.getString("sexo");
                 int estatura = pacienteJSON.getInt("estatura");
                 String imagen = pacienteJSON.getString("imagen");
-                paciente = new Paciente(idPaciente, nombre, apellidos, email, "", imagen,
+                paciente = new Paciente(idPaciente, nombre,  email, "", imagen,
                         fecNacimiento, peso, estatura, sexo);
                 myPhisioBBDDHelper.savePaciente(paciente);
 
@@ -103,7 +105,7 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
                         String dias = planUsuario.getString("dias");
                         //crear Plan
                         HttpGet getPlanes =
-                                new HttpGet(URLAPI + "planes/" + idPlan);
+                                new HttpGet(URLAPI + "planes/");
                         HttpResponse respPlanes = httpClient.execute(getPlanes);
                         String respStrPlanes = EntityUtils.toString(respPlanes.getEntity());
                         JSONArray planesA = new JSONArray(respStrPlanes);
@@ -111,7 +113,14 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
                             JSONObject planes = planesA.getJSONObject(k);
                             int idPlan2 = planes.getInt("idPlan");
                             String nombrePlan = planes.getString("nombre");
-                            float tiempo = Float.valueOf(planes.getString("tiempo"));
+                            float tiempo;
+                            //if(planes.getString("tiempo").equals("null")){
+                            //    tiempo = Float.valueOf("0.0");
+                            //}else{
+                            Log.e("tiempo plan--->",planes.getString("tiempo"));
+                                tiempo=Float.valueOf(planes.getString("tiempo"));
+                            //}
+
                             int series = planes.getInt("series");
                             String descripcion = planes.getString("descripcion");
                             String categoria = planes.getString("categoria");
@@ -124,7 +133,7 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
                         float tiempo = Float.valueOf(planUsuario.getString("tiempo"));
                         int series = planUsuario.getInt("series");
 
-                        planesUsuario = new PlanesUsuario(idPU, idPaciente, idPlan, tiempo, series, dias);
+                        planesUsuario = new PlanesUsuario(idPU, idPlan, idPaciente, tiempo, series, dias);
                         myPhisioBBDDHelper.savePlanesUsuarios(planesUsuario);
 
                     }
@@ -149,7 +158,7 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
         super.onPostExecute(result);
         //LoginActivity.showProgress(false);
         for(int i=0;i<idPlanes.size();i++){
-            taskEjercicios = new EjerciciosTask(idPlanes.get(i), context);
+            taskEjercicios = new GetEjerciciosTask(idPlanes.get(i), context);
             taskEjercicios.execute();
 
         }
@@ -170,7 +179,7 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
     private void startPaciente() {
         //Toast.makeText(context, "funciona", Toast.LENGTH_LONG).show();
 
-        Intent intent = new Intent(context, PrincipalActivity.class);
+        Intent intent = new Intent(context, AdministradorActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
 

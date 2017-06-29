@@ -3,21 +3,16 @@ package com.myphisiohome.myphisiohome;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -44,10 +39,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class FragmentPlanes extends Fragment   {
+public class FragmentPlanesPaciente extends Fragment   {
     private RecyclerView reciclador;
     private LinearLayoutManager layoutManager;
-    private AdaptadorPlanes adaptador;
+    private AdaptadorPlanesPaciente adaptador;
     private Cursor cursorPlan;
     private AdapterView.OnItemClickListener onItemClickListener;
     private SwipeRefreshLayout refreshLayout;
@@ -61,8 +56,9 @@ public class FragmentPlanes extends Fragment   {
     private Ejercicio ejercicio;
     private int idPaciente;
     Bundle arg= new Bundle();
+    private int aux;
 
-    public FragmentPlanes() {
+    public FragmentPlanesPaciente() {
     }
 
     @Override
@@ -78,13 +74,18 @@ public class FragmentPlanes extends Fragment   {
         arg=getArguments();
         if(prefs.getBoolean("PREF_ADMINISTRADOR_LOGGED",false)){
             idPaciente=arg.getInt("idPaciente",0);
+            aux=2;
+            if(idPaciente==0){
+                aux=1;
+            }
             fab.hide();
             refreshLayout.setEnabled(false);
         }else if(prefs.getBoolean("PREF_PACIENTE_LOGGED",false)){
             idPaciente=prefs.getInt("PREF_PACIENTE_ID",0);
+            aux=3;
             fab.hide();
         }
-        adaptador = new AdaptadorPlanes(getActivity());
+        adaptador = new AdaptadorPlanesPaciente(getActivity(),idPaciente);
         pacienteBBDDHelper2=new MyPhisioBBDDHelper(getActivity());
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
 
@@ -102,14 +103,16 @@ public class FragmentPlanes extends Fragment   {
             }
         });
 
-        ((AdaptadorPlanes) adaptador).setOnItemClickListener(new AdaptadorPlanes.OnItemClickListener() {
+        ((AdaptadorPlanesPaciente) adaptador).setOnItemClickListener(new AdaptadorPlanesPaciente.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, int idPlan, String nombre, String categoria) {
 
             }
             @Override
             public void onItemClick(View view, int position, Cursor plan) {
+                //Log.e("idPlan", Integer.toString(idPlan));
 
+                ///
                 Fragment fragment=new FragmentPlan();
                 //FragmentManager fragmentManager = getSupportFragmentManager();
                 Bundle args = new Bundle();
@@ -119,7 +122,8 @@ public class FragmentPlanes extends Fragment   {
                 args.putString("categoria",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.CATEGORIA)));
                 args.putString("dias",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.DIAS)));
                 args.putInt("vueltas",plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.SERIES)));
-                args.putInt("aux", 1);
+                args.putInt("aux",aux);
+
                 fragment.setArguments(args);
 
                 FragmentTransaction transaction=getFragmentManager().beginTransaction();
@@ -163,7 +167,6 @@ public class FragmentPlanes extends Fragment   {
             pacienteBBDDHelper= new MyPhisioBBDDHelper(getActivity());
             //
             int resul=0;
-            Log.e("ID paciente desde planes: ",Integer.toString(idPaciente));
             String URLAPI="http://myphisio.digitalpower.es/v1/";
             HttpClient httpClient = new DefaultHttpClient();
             HttpGet getPlanesPaciente =
@@ -203,7 +206,6 @@ public class FragmentPlanes extends Fragment   {
                             String categoria=planes.getString("categoria");
                             plan=new Plan(idPlan2,nombre,descripcion,categoria,series,tiempo,dias);
                             idPlanes.add(idPlan2);
-                            Log.e("ID PLAN desde planes: ",Integer.toString(idPlan2));
                             pacienteBBDDHelper.savePlanes(plan);
                         }
                         //
@@ -211,7 +213,7 @@ public class FragmentPlanes extends Fragment   {
                         float tiempo=Float.valueOf(planUsuario.getString("tiempo"));
                         int series=planUsuario.getInt("series");
 
-                        planesUsuario=new PlanesUsuario(idPU,idPaciente,idPlan,tiempo,series,dias);
+                        planesUsuario=new PlanesUsuario(idPU,idPlan,idPaciente,tiempo,series,dias);
                         pacienteBBDDHelper.savePlanesUsuarios(planesUsuario);
 
                     }
@@ -241,7 +243,7 @@ public class FragmentPlanes extends Fragment   {
             refreshLayout.setRefreshing(false);
             reciclador.setEnabled(true);
             reciclador.setClickable(true);
-            adaptador = new AdaptadorPlanes(getActivity());
+            adaptador = new AdaptadorPlanesPaciente(getActivity(),idPaciente);
             reciclador.setAdapter(adaptador);
 
         }

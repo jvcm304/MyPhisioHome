@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
         <ImageButton
             android:layout_width="100dp"
             android:layout_height="100dp"
@@ -44,82 +45,66 @@
     </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_email"
+        android:id="@+id/til_categoria"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/et_email"
+            android:id="@+id/et_categoria"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email"
-            android:inputType="textEmailAddress"
+            android:hint="Categoria"
+            android:inputType="text"
             tools:text="" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_fecNacimiento"
+        android:id="@+id/til_descripcion"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/et_fecNacimiento"
+            android:id="@+id/et_descripcion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Fecha de nacimiento"
-            android:inputType="date"
+            android:hint="Descripcion"
+            android:inputType="text"
             tools:text="" />
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_estatura"
+        android:id="@+id/til_tips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <android.support.design.widget.TextInputEditText
-            android:id="@+id/et_estatura"
+            android:id="@+id/et_tips"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|start"
-            android:hint="Estatura"
-            android:imeOptions="actionDone"
-            android:inputType="number"
-            tools:text="" />
+            android:hint="Recomendaciones"
+            android:inputType="text" />
+
     </android.support.design.widget.TextInputLayout>
+
     <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_sexo"
+        android:id="@+id/til_tipo"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginTop="@dimen/activity_vertical_margin">
 
         <Spinner
-            android:id="@+id/et_sexo"
+            android:id="@+id/et_tipo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:entries="@array/tipo"
             android:gravity="top|start"
-            android:imeOptions="actionDone"
-            android:entries="@array/sexo" />
+            android:imeOptions="actionDone" />
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/til_peso"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
-
-        <android.support.design.widget.TextInputEditText
-            android:id="@+id/et_peso"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="top|start"
-            android:hint="Peso"
-            android:imeOptions="actionDone"
-            android:inputType="numberDecimal"
-            tools:text="" />
-    </android.support.design.widget.TextInputLayout>
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/et_fab"
         android:layout_width="wrap_content"

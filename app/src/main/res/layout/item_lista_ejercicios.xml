@@ -37,7 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="true"
-                android:text="Radio Number One"
+
                 android:textColor="@color/primaryDarkColor" />
 
 
@@ -49,7 +49,7 @@
                 android:layout_alignLeft="@+id/nombre_ejercicio"
                 android:layout_below="@+id/nombre_ejercicio"
                 android:layout_marginTop="8dp"
-                android:text="#pop #rock #news"
+
                 android:textColor="@color/accentColor" />
             <TextView
                 android:id="@+id/repeticiones"
@@ -59,7 +59,7 @@
                 android:layout_alignLeft="@+id/nombre_ejercicio"
                 android:layout_below="@+id/nombre_ejercicio"
                 android:layout_marginTop="-4dp"
-                android:text="Repeticiones: 2   "
+
                 android:textColor="@color/accentColor" />
 
         </RelativeLayout>

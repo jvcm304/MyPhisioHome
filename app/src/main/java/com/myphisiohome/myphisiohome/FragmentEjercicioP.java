@@ -1,6 +1,7 @@
 package com.myphisiohome.myphisiohome;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -23,9 +24,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.myphisiohome.myphisiohome.AsyncTask.DeleteEjercicioServidor;
 import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
+import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.BBDD.PlanBBDD;
 import com.myphisiohome.myphisiohome.Clases.Ejercicio;
+import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,7 +47,11 @@ public class FragmentEjercicioP extends android.support.v4.app.Fragment{
     private TextView tips;
     private String urlImagenes="http://myphisio.digitalpower.es/imagenes/";
     private ImageView imagen;
-
+    private FloatingActionButton fab;
+    private int idEjercicio;
+    private MyPhisioBBDDHelper myPhisioBBDDHelper;
+    DeleteEjercicioServidor deleteEjercicioServidor;
+    int aux;
 
     public FragmentEjercicioP() {
     }
@@ -61,6 +69,7 @@ public class FragmentEjercicioP extends android.support.v4.app.Fragment{
         descripcion=(TextView) view.findViewById(R.id.descripcion_ejercicioP_detail);
         tips=(TextView) view.findViewById(R.id.tips_ejercicioP_detail);
         imagen=(ImageView) view.findViewById(R.id.imagen_ejercicioP_detail);
+        fab=(FloatingActionButton) view.findViewById(R.id.fab);
         CollapsingToolbarLayout collapser =
                 (CollapsingToolbarLayout) view.findViewById(R.id.collapser_ejercicoP);
         collapser.setTitle(getArguments().getString("nombre"));
@@ -68,7 +77,34 @@ public class FragmentEjercicioP extends android.support.v4.app.Fragment{
         String image=getArguments().getString("imagen");
         tips.setText(getArguments().getString("tips"));
         descripcion.setText(getArguments().getString("descripcion"));
+        idEjercicio=getArguments().getInt("idEjercicio");
+        aux=getArguments().getInt("aux");
+        if (SessionPrefs.get(getActivity()).isLoggedIn(getActivity())) {
+           fab.hide();
 
+        }
+        // Redirección al Login
+        if (SessionPrefs.get(getActivity()).isLoggedInAdministrador(getActivity())) {
+            if(aux==2){
+                fab.hide();
+            }else if(aux==3){
+                fab.show();
+                //borrar ejercicioPlan
+            }else if(aux==1){
+                fab.show();
+                //borrar ejercicio
+                fab.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                showSnackBar("Borrar", v);
+                            }
+                        }
+                );
+            }
+
+        }
 
 
         new DownloadImageTask().execute(urlImagenes+image);
@@ -94,10 +130,18 @@ public class FragmentEjercicioP extends android.support.v4.app.Fragment{
 
 
     private void showSnackBar(String msg,View view) {
-        Snackbar
+
+
+        myPhisioBBDDHelper=new MyPhisioBBDDHelper(getActivity());
+        myPhisioBBDDHelper.deleteEjercicio(idEjercicio);
+        deleteEjercicioServidor= new DeleteEjercicioServidor(idEjercicio,getActivity());
+        deleteEjercicioServidor.execute();
+        startActivity(new Intent(getActivity(),AdministradorActivity.class));
+        /*Snackbar
                 .make(view, msg, Snackbar.LENGTH_LONG)
-                .show();
+                .show();*/
     }
+
     class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
     {
 

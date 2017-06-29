@@ -32,12 +32,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.myphisiohome.myphisiohome.API.MyPhisioApi;
 import com.myphisiohome.myphisiohome.AsyncTask.AdministradorLoginTask;
 import com.myphisiohome.myphisiohome.AsyncTask.EjerciciosTask;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
-import com.myphisiohome.myphisiohome.Clases.Ejercicio;
-import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
 import com.myphisiohome.myphisiohome.Clases.Paciente;
 import com.myphisiohome.myphisiohome.Clases.Plan;
 import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
@@ -66,8 +63,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
-    //private Retrofit mRestAdapter;
-    private MyPhisioApi mMyPhisioApi;
+
 
     private static final String DUMMY_USER_ID = "administrador@";
     private static final String DUMMY_PASSWORD = "administrador";
@@ -90,8 +86,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private Paciente paciente;
     private PlanesUsuario planesUsuario;
     private Plan plan;
-    private static EjercicioPlanes ejercicioPlanes;
-    private static Ejercicio ejercicio;
+
 
 
     @Override
@@ -106,7 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         // Redirección al Login
         if (SessionPrefs.get(LoginActivity.this).isLoggedInAdministrador(getApplicationContext())) {
-            startActivity(new Intent(this, PrincipalActivity.class));
+            startActivity(new Intent(this, AdministradorActivity.class));
             finish();
             return;
         }
@@ -381,7 +376,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         sexo = jsonPaciente.getString("sexo");
                         estatura = jsonPaciente.getInt("estatura");
                         imagen=jsonPaciente.getString("imagen");
-                        paciente= new Paciente(idPaciente,nombre,apellidos,email,mPassword,imagen,
+                        paciente= new Paciente(idPaciente,nombre,email,mPassword,imagen,
                                 fecNacimiento,peso,estatura,sexo);
                         //comunicador.setPaciente(paciente);
                         pacienteBBDDHelper.savePaciente(paciente);
@@ -435,7 +430,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                 float tiempo=Float.valueOf(planUsuario.getString("tiempo"));
                                 int series=planUsuario.getInt("series");
 
-                                planesUsuario=new PlanesUsuario(idPU,idPaciente,idPlan,tiempo,series,dias);
+                                planesUsuario=new PlanesUsuario(idPU,idPlan,idPaciente,tiempo,series,dias);
                                 pacienteBBDDHelper.savePlanesUsuarios(planesUsuario);
 
                             }

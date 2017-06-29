@@ -1,21 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/coordinator"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
 
 
-    <!-- Objeto con Scroll -->
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scroll"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/app_bar"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <LinearLayout
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -34,11 +20,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Categoria"
+                        android:text="Email"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
                     <!--Texto de ejemplo-->
                     <TextView
-                        android:id="@+id/categoria_ejercicioP_detail"
+                        android:id="@+id/email"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/app_name" />
@@ -61,11 +47,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Descripcion"
+                        android:text="Sexo"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
                     <!--Texto de ejemplo-->
                     <TextView
-                        android:id="@+id/descripcion_ejercicioP_detail"
+                        android:id="@+id/sexo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/app_name" />
@@ -91,11 +77,11 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Recomendaciones"
+                        android:text="Fecha nacimiento"
                         android:textAppearance="@style/TextAppearance.AppCompat.Title" />
                     <!-- Texto de ejemplo -->
                     <TextView
-                        android:id="@+id/tips_ejercicioP_detail"
+                        android:id="@+id/fecNacimiento"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/app_name" />
@@ -104,70 +90,65 @@
 
             </android.support.v7.widget.CardView>
 
+            <!-- Card Intereses -->
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
 
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- Etiqueta Intereses -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="estatura"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                    <!-- Texto de ejemplo -->
+                    <TextView
+                        android:id="@+id/estatura"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/card_margin"
+                android:layout_marginLeft="@dimen/card_margin"
+                android:layout_marginRight="@dimen/card_margin">
+
+                <LinearLayout
+                    style="@style/Widget.CardContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <!-- Etiqueta Intereses -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Peso"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Title" />
+
+                    <!-- Texto de ejemplo -->
+                    <TextView
+                        android:id="@+id/peso"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name" />
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
 
         </LinearLayout>
 
-    </android.support.v4.widget.NestedScrollView>
-
-    <!-- App Bar -->
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
-        android:layout_width="match_parent"
-        android:layout_height="256dp"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <!-- Collapser -->
-        <android.support.design.widget.CollapsingToolbarLayout
-            android:id="@+id/collapser_ejercicoP"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
-
-            <!-- Imagen del detalle -->
-            <ImageView
-                android:id="@+id/imagen_ejercicioP_detail"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fitsSystemWindows="true"
-                android:scaleType="centerCrop"
-                app:layout_collapseMode="parallax" />
-
-            <!-- Toolbar -->
-            <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@android:color/transparent"
-                app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                app:theme="@style/CustomActionBar"
-
-                />
-
-        </android.support.design.widget.CollapsingToolbarLayout>
-
-
-    </android.support.design.widget.AppBarLayout>
-
-    <!-- FAB -->
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="@dimen/size_fab"
-        android:layout_height="@dimen/size_fab"
-        android:layout_margin="@dimen/fab_margin"
-        android:backgroundTint="@color/accentColor"
-        android:src="@drawable/ic_delete_grey"
-        app:borderWidth="0dp"
-        app:elevation="@dimen/fab_margin"
-        app:layout_anchor="@id/app_bar"
-
-        app:layout_anchorGravity="bottom|right|end" />
-
-
-</android.support.design.widget.CoordinatorLayout>

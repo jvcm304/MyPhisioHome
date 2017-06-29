@@ -21,7 +21,20 @@ public class Ejercicio {
     private float repeticiones;
     public Ejercicio(){};
     public Ejercicio(int idEjercicio, String nombre, String descripcion, String tips,
-                     String categoria, String imagen, int tipo, float repeticiones){
+                     String categoria, String imagen, int tipo){
+
+        this.idEjercicio=idEjercicio;
+        this.nombre=nombre;
+        this.descripcion=descripcion;
+        this.tips=tips;
+        this.categoria=categoria;
+        this.imagen=imagen;
+        this.tipo=tipo;
+
+
+    }
+    public Ejercicio(int idEjercicio, String nombre, String descripcion, String tips,
+                     String categoria, String imagen, int tipo,float repeticiones){
 
         this.idEjercicio=idEjercicio;
         this.nombre=nombre;
@@ -34,6 +47,7 @@ public class Ejercicio {
 
 
     }
+
 
     public int getIdEjercicio() {
         return idEjercicio;

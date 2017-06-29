@@ -1,6 +1,7 @@
 package com.myphisiohome.myphisiohome;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,19 +12,18 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Toast;
 
 import com.myphisiohome.myphisiohome.AsyncTask.EjerciciosTask;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
+import com.myphisiohome.myphisiohome.BBDD.PacienteBBDD;
 import com.myphisiohome.myphisiohome.BBDD.PlanBBDD;
 import com.myphisiohome.myphisiohome.Clases.Ejercicio;
 import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
@@ -44,26 +44,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class FragmentPlanes extends Fragment   {
+public class FragmentPacientes extends Fragment   {
     private RecyclerView reciclador;
     private LinearLayoutManager layoutManager;
-    private AdaptadorPlanes adaptador;
+    private AdaptadorPacientes adaptador;
     private Cursor cursorPlan;
     private AdapterView.OnItemClickListener onItemClickListener;
     private SwipeRefreshLayout refreshLayout;
     private MyPhisioBBDDHelper pacienteBBDDHelper;
     private MyPhisioBBDDHelper pacienteBBDDHelper2;
-    private FloatingActionButton fab;
 
     private PlanesUsuario planesUsuario;
     private Plan plan;
     private EjercicioPlanes ejercicioPlanes;
     private Ejercicio ejercicio;
-    private int idPaciente;
-    Bundle arg= new Bundle();
 
-    public FragmentPlanes() {
-    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,20 +69,24 @@ public class FragmentPlanes extends Fragment   {
         layoutManager = new LinearLayoutManager(getActivity());
         reciclador.setLayoutManager(layoutManager);
         refreshLayout= (SwipeRefreshLayout) view.findViewById(R.id.swipeRefresh);
-        fab=(FloatingActionButton) view.findViewById(R.id.fab_add);
-        final SharedPreferences prefs = this.getActivity().getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
-        arg=getArguments();
-        if(prefs.getBoolean("PREF_ADMINISTRADOR_LOGGED",false)){
-            idPaciente=arg.getInt("idPaciente",0);
-            fab.hide();
-            refreshLayout.setEnabled(false);
-        }else if(prefs.getBoolean("PREF_PACIENTE_LOGGED",false)){
-            idPaciente=prefs.getInt("PREF_PACIENTE_ID",0);
-            fab.hide();
-        }
-        adaptador = new AdaptadorPlanes(getActivity());
+        //desabilitar refrescar
+        refreshLayout.setEnabled(false);
+        // Setear escucha al FAB
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab_add);
+        fab.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        showSnackBar("Configuracion", v);
+                    }
+                }
+        );
+        //final SharedPreferences prefs = this.getActivity().getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
+
+        adaptador = new AdaptadorPacientes(getActivity());
         pacienteBBDDHelper2=new MyPhisioBBDDHelper(getActivity());
-        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
+        /*refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
 
             @Override
             public void onRefresh() {
@@ -94,32 +94,36 @@ public class FragmentPlanes extends Fragment   {
                 reciclador.setEnabled(false);
                 reciclador.setClickable(false);
                 pacienteBBDDHelper2.refrescar();
-                PlanesPacienteTask planesPacientesTask= new PlanesPacienteTask( idPaciente);
+                FragmentPlanes.PlanesPacienteTask planesPacientesTask= new FragmentPlanes.PlanesPacienteTask( prefs.getInt("PREF_PACIENTE_ID",0));
                 planesPacientesTask.execute();
 
 
 
             }
-        });
+        });*/
 
-        ((AdaptadorPlanes) adaptador).setOnItemClickListener(new AdaptadorPlanes.OnItemClickListener() {
+        ((AdaptadorPacientes) adaptador).setOnItemClickListener(new AdaptadorPacientes.OnItemClickListener() {
             @Override
-            public void onItemClick(View view, int position, int idPlan, String nombre, String categoria) {
+            public void onItemClick(View view, int position, int idPaciente) {
 
             }
             @Override
-            public void onItemClick(View view, int position, Cursor plan) {
+            public void onItemClick(View view, int position, Cursor paciente) {
+                //Log.e("idPlan", Integer.toString(idPlan));
 
-                Fragment fragment=new FragmentPlan();
-                //FragmentManager fragmentManager = getSupportFragmentManager();
+                ///
+                Fragment fragment=new FragmentPacienteAdmin();
                 Bundle args = new Bundle();
-                plan.moveToFirst();
-                args.putInt("idPlan",plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.ID_PLAN)));
-                args.putString("nombre",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.NOMBRE)));
-                args.putString("categoria",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.CATEGORIA)));
-                args.putString("dias",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.DIAS)));
-                args.putInt("vueltas",plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.SERIES)));
-                args.putInt("aux", 1);
+                paciente.moveToFirst();
+                args.putInt("idPaciente",paciente.getInt(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.ID_PACIENTE)));
+                args.putString("nombre",paciente.getString(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.NOMBRE)));
+                args.putString("imagen",paciente.getString(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.IAMGEN)));
+                args.putString("email",paciente.getString(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.EMAIL)));
+                args.putString("fecNacimiento",paciente.getString(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.FEC_NACIMIENTO)));
+                args.putString("sexo",paciente.getString(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.SEXO)));
+                args.putString("peso",paciente.getString(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.PESO)));
+                args.putInt("estatura",paciente.getInt(paciente.getColumnIndex(PacienteBBDD.PacienteEntry.ESTATURA)));
+
                 fragment.setArguments(args);
 
                 FragmentTransaction transaction=getFragmentManager().beginTransaction();
@@ -135,9 +139,12 @@ public class FragmentPlanes extends Fragment   {
 
         return view;
     }
+    private void showSnackBar(String msg,View view) {
 
+        startActivity(new Intent(getActivity(),AddPacienteActivity.class));
+    }
 
-    public class PlanesPacienteTask extends AsyncTask<Void, Void, Integer> {
+    /*public class PlanesPacienteTask extends AsyncTask<Void, Void, Integer> {
 
         private Integer estado;
         private String mensaje;
@@ -241,11 +248,12 @@ public class FragmentPlanes extends Fragment   {
             refreshLayout.setRefreshing(false);
             reciclador.setEnabled(true);
             reciclador.setClickable(true);
-            adaptador = new AdaptadorPlanes(getActivity());
+            adaptador = new AdaptadorPacientes(getActivity());
             reciclador.setAdapter(adaptador);
 
         }
-    }
+    }*/
+
 
 
 

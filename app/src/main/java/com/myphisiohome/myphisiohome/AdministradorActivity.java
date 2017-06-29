@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.myphisiohome.myphisiohome.AsyncTask.AdministradorLoginTask;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
 
@@ -36,8 +37,7 @@ import java.net.URL;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
-
-public class PrincipalActivity extends AppCompatActivity {
+public class AdministradorActivity extends AppCompatActivity {
 
     /**
      * Instancia del drawer
@@ -47,22 +47,17 @@ public class PrincipalActivity extends AppCompatActivity {
     private TextView email;
     private TextView nombre;
     private CircleImageView imagenCircle;
-    private String urlImagenes="http://myphisio.digitalpower.es/imagenes/";
     private MyPhisioBBDDHelper bdHelper;
-    private int idPlan;
+    private AdministradorLoginTask administradorLoginTask=null;
 
-
-    /**
-     * Titulo inicial del drawer
-     */
-    private String drawerTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_paciente);
+        setContentView(R.layout.activity_admin);
         setToolbar(); // Setear Toolbar como action bar
         setNavigationDrawer();
+
 
 
 
@@ -78,11 +73,9 @@ public class PrincipalActivity extends AppCompatActivity {
         email=(TextView) headerView.findViewById(R.id.email);
         nombre=(TextView) headerView.findViewById(R.id.username);
         imagenCircle=(CircleImageView) headerView.findViewById(R.id.circle_image);
-        SharedPreferences prefs = getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
-        email.setText(prefs.getString("PREF_PACIENTE_EMAIL",""));
-        nombre.setText(prefs.getString("PREF_PACIENTE_NAME",""));
-        String image =prefs.getString("PREF_PACIENTE_IMAGE","vicente.png");
-        new DownloadImageTask().execute(urlImagenes+image);
+        email.setText("MyPhisio@Home");
+        nombre.setText("Juan Jose Moreno");
+        imagenCircle.setImageDrawable(getApplicationContext().getResources().getDrawable(R.drawable.imgs_juanjo));
         seleccionarItem(navigationView.getMenu().getItem(0));
 
     }
@@ -140,17 +133,20 @@ public class PrincipalActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         switch (itemDrawer.getItemId()) {
+            case R.id.nav_paciente:
+
+                fragmentoGenerico = new FragmentPacientes();
+                break;
             case R.id.nav_planes:
-                fragmentoGenerico = new FragmentPlanesPaciente();
+                //fragmentoGenerico = new FragmentPlanes2();
                 break;
-            case R.id.nav_usuario:
-                fragmentoGenerico = new FragmentPaciente();
+
+            case R.id.nav_ejercicio:
+                fragmentoGenerico = new FragmentEjercicios();
                 break;
-            /*case R.id.item_categorias:
-                fragmentoGenerico = new FragmentoCategorias();
-                break;*/
+
             case R.id.nav_log_out:
-                SessionPrefs.get(PrincipalActivity.this).logOut();
+                SessionPrefs.get(AdministradorActivity.this).logOut();
                 bdHelper= new MyPhisioBBDDHelper(getApplicationContext());
                 bdHelper.loogOut();
                 startActivity(new Intent(this, LoginActivity.class));
@@ -165,83 +161,5 @@ public class PrincipalActivity extends AppCompatActivity {
         }
         setTitle(itemDrawer.getTitle());
     }
-
-
-    class DownloadImageTask extends AsyncTask<String, Void, Bitmap>
-    {
-
-        //final ProgressDialog progressDialog = new ProgressDialog(main.this);
-
-        protected void onPreExecute()
-        {
-            imagenCircle.setImageDrawable(getResources().getDrawable(R.drawable.cargar2));
-        }
-
-        protected Bitmap doInBackground(String... urls)
-        {
-            Log.d("DEBUG", "drawable");
-
-            return downloadImage(urls[0]);
-
-        }
-
-        protected void onPostExecute(Bitmap imagen)
-        {
-            //Log.e("Imagen-->", imagen.toString());
-
-            Log.e("Imagen----->:",guardarImagen(getApplicationContext(),"foto",imagen));
-            imagenCircle.setImageBitmap(imagen);
-
-
-        }
-
-        /**
-         * Devuelve una imagen desde una URL
-         *
-         * @return Una imagen
-         */
-        private Bitmap downloadImage(String imageUrlS)
-        {
-            try
-            {
-                URL imageUrl = new URL(imageUrlS);
-                HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-                conn.connect();
-
-                return BitmapFactory.decodeStream(conn.getInputStream());
-            }
-            catch (MalformedURLException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
-
-    private String guardarImagen (Context context, String nombre, Bitmap imagen){
-        ContextWrapper cw = new ContextWrapper(context);
-        File dirImages = cw.getDir("fotoPerfil", Context.MODE_PRIVATE);
-        File myPath = new File(dirImages, nombre + ".png");
-
-        FileOutputStream fos = null;
-        try{
-            fos = new FileOutputStream(myPath);
-            imagen.compress(Bitmap.CompressFormat.JPEG, 10, fos);
-            fos.flush();
-        }catch (FileNotFoundException ex){
-            ex.printStackTrace();
-        }catch (IOException ex){
-            ex.printStackTrace();
-        }
-        return myPath.getAbsolutePath();
-    }
-
-
-
 
 }

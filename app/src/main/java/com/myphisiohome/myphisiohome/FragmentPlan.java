@@ -1,5 +1,6 @@
 package com.myphisiohome.myphisiohome;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
@@ -29,13 +30,14 @@ public class FragmentPlan extends Fragment {
 
     private RecyclerView reciclador;
     private LinearLayoutManager layoutManager;
-    private AdaptadorEjercicios adaptador;
+    private AdaptadorEjerciciosPlan adaptador;
     private TextView categoriaTV, dias, vueltas;
     private int idPlan;
     private String categoria;
     private String titulo;
     private static String diasString;
     private ImageView imagen;
+    private int aux;
 
     public FragmentPlan() {
 
@@ -60,7 +62,7 @@ public class FragmentPlan extends Fragment {
         vueltas.setText("Series: "+Integer.toString(getArguments().getInt("vueltas")));
         this.diasString=getArguments().getString("dias");
         dias.setText(reemplazarDias(diasString));
-
+        aux=getArguments().getInt("aux");
         categoriaTV.setText(categoria);
         collapser.setTitle(titulo); // Cambiar título
         imagen.setImageDrawable(getResources().getDrawable(R.drawable.material_background));
@@ -71,28 +73,43 @@ public class FragmentPlan extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         reciclador.setLayoutManager(layoutManager);
 
-        adaptador = new AdaptadorEjercicios(getActivity(),idPlan);
+        adaptador = new AdaptadorEjerciciosPlan(getActivity(),idPlan);
         reciclador.setAdapter(adaptador);
         FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab_play);
         final FragmentManager fragmentManager=getFragmentManager();
         final Bundle args = new Bundle();
         args.putInt("idPlan",idPlan);
-        fab.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        DialogFragment dialogFragment=new DialogoPlayEjercicios();
-                        dialogFragment.setArguments(args);
-                        dialogFragment.show(getFragmentManager(),"DialogoPlayEjercicios");
+        args.putInt("series", getArguments().getInt("vueltas"));
+        Log.e("Play-->",Integer.toString(aux));
+        if(aux==2){
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_grey));
+            //Borrar planUsaurio
 
+         }else if(aux==1){
+            //borrar plan, borrar planusuario y ejerciciosPlanes
+
+        }else if(aux==3){
+
+            fab.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //startActivity(new Intent(getActivity(),PlayPlanActivity.class));
+                            DialogFragment dialogFragment=new DialogoPlayEjercicios();
+                            dialogFragment.setArguments(args);
+                            dialogFragment.show(getFragmentManager(),"DialogoPlayEjercicios");
+
+                        }
                     }
-                }
-        );
-        ((AdaptadorEjercicios) adaptador).setOnItemClickListener(new AdaptadorEjercicios.OnItemClickListener() {
+            );
+        }
+
+
+        ((AdaptadorEjerciciosPlan) adaptador).setOnItemClickListener(new AdaptadorEjerciciosPlan.OnItemClickListener() {
 
 
             @Override
-            public void onItemClick(AdaptadorEjercicios.ViewHolder view, int position) {
+            public void onItemClick(AdaptadorEjerciciosPlan.ViewHolder view, int position) {
 
             }
 
@@ -107,6 +124,7 @@ public class FragmentPlan extends Fragment {
                 args.putString("descripcion",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.DESCRIPCION)));
                 args.putString("tips",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPS)));
                 args.putString("imagen",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)));
+                args.putInt("aux",2);
 
                 fragment.setArguments(args);
 
