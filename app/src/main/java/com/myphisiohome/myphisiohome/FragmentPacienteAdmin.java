@@ -106,11 +106,14 @@ public class FragmentPacienteAdmin extends android.support.v4.app.Fragment{
         //SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         Fragment fragmentPacienteDatos=new FragmentPacienteDatos();
         Fragment fragmentPlanes=new FragmentPlanesPaciente();
+        Fragment fragmentSeguimientoPaciente=new FragmentSeguimientoPaciente();
         arg=getArguments();
         fragmentPacienteDatos.setArguments(arg);
         fragmentPlanes.setArguments(arg);
+        fragmentSeguimientoPaciente.setArguments(arg);
         adapter.addFragment(fragmentPacienteDatos, "Datos");
         adapter.addFragment(fragmentPlanes, "Planes");
+        adapter.addFragment(fragmentSeguimientoPaciente, "Seguimiento");
 
         viewPager.setAdapter(adapter);
     }

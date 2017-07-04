@@ -103,6 +103,22 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
                         int idPU = planUsuario.getInt("idPU");
                         int idPlan = planUsuario.getInt("idPlan");
                         String dias = planUsuario.getString("dias");
+                        //seguimiento
+                        HttpGet getSeguimiento =
+                                new HttpGet(URLAPI + "seguimiento/"+idPU);
+                        HttpResponse respSeguimiento = httpClient.execute(getSeguimiento);
+                        String respStrSeguimiento = EntityUtils.toString(respSeguimiento.getEntity());
+                        JSONArray SeguimientoA = new JSONArray(respStrSeguimiento);
+                        for (int l = 0; l < SeguimientoA.length(); l++) {
+                            JSONObject seguimientoO = SeguimientoA.getJSONObject(l);
+                            int idSeguimiento=seguimientoO.getInt("idSeguimiento");
+                            int satisfaccion=seguimientoO.getInt("satisfaccion");
+                            String comentarios=seguimientoO.getString("comentarios");
+                            String fechaActual=seguimientoO.getString("fecha");
+                            seguimiento=new Seguimiento(idSeguimiento,idPU,comentarios,satisfaccion,fechaActual);
+                            myPhisioBBDDHelper.saveSeguimiento(seguimiento);
+                        }
+
                         //crear Plan
                         HttpGet getPlanes =
                                 new HttpGet(URLAPI + "planes/");
@@ -117,8 +133,8 @@ public class AdministradorLoginTask extends AsyncTask<Void, Object, Integer> {
                             //if(planes.getString("tiempo").equals("null")){
                             //    tiempo = Float.valueOf("0.0");
                             //}else{
-                            Log.e("tiempo plan--->",planes.getString("tiempo"));
-                                tiempo=Float.valueOf(planes.getString("tiempo"));
+
+                            tiempo=Float.valueOf(planes.getString("tiempo"));
                             //}
 
                             int series = planes.getInt("series");

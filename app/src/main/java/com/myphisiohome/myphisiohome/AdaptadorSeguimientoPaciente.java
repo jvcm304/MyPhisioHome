@@ -8,19 +8,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.BBDD.PlanBBDD;
-import com.myphisiohome.myphisiohome.BBDD.PlanesUsuarioBBDD;
+import com.myphisiohome.myphisiohome.BBDD.SeguimientoBBDD;
 
 
 /**
  * Created by Vicente on 30/5/17.
  */
 
-public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlanesPaciente.ViewHolder> {
+public class AdaptadorSeguimientoPaciente extends RecyclerView.Adapter<AdaptadorSeguimientoPaciente.ViewHolder> {
 
 
     Context context;
@@ -41,14 +42,13 @@ public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlane
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         // Campos respectivos de un item
-        public TextView nombre;
-        public TextView categoria;
-        public ImageView imagen;
-        public int idPlan;
+        public TextView nombrePlan;
+        public TextView fecha;
+        public RatingBar satisfaccion;
+        public int satisfaccionInt;
         MyPhisioBBDDHelper pacienteBBDDHelper;
         Cursor cursor,cursor2;
         Context contexto;
-        public TextView dias;
         public int idPaciente2;
 
 
@@ -58,12 +58,15 @@ public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlane
             super(v);
             this.contexto=c;
             this.idPaciente2=idPaciente;
-            nombre = (TextView) v.findViewById(R.id.nombre_plan);
-            categoria = (TextView) v.findViewById(R.id.categoria_plan);
-            imagen = (ImageView) v.findViewById(R.id.miniatura_plan);
-            dias = (TextView) v.findViewById(R.id.dias_plan);
+            fecha = (TextView) v.findViewById(R.id.seg_fecha);
+            nombrePlan = (TextView) v.findViewById(R.id.seg_nombrePlan);
+            satisfaccion = (RatingBar) v.findViewById(R.id.seg_satisfaccion);
+            satisfaccion.setNumStars(5);
+            Log.e("Estrellas:",satisfaccion.getNumStars()+"");
+            satisfaccion.setStepSize(1);
+            satisfaccion.setEnabled(false);
             pacienteBBDDHelper= new MyPhisioBBDDHelper(c);
-            cursor=pacienteBBDDHelper.getPlanesByPaciente(idPaciente2);
+            cursor=pacienteBBDDHelper.getSeguimientoByPaciente(idPaciente2);
 
 
             v.setOnClickListener(new View.OnClickListener() {
@@ -72,10 +75,8 @@ public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlane
                     int position  = ViewHolder.super.getAdapterPosition();
                     cursor.moveToPosition(position);
                     if(cursor.moveToPosition(position)){
-
-                        cursor2=pacienteBBDDHelper.getPlanById(cursor.getInt(cursor.getColumnIndex(PlanBBDD.PlanEntry.ID_PLAN)));
+                        cursor2=pacienteBBDDHelper.getSeguimientoById(cursor.getInt(cursor.getColumnIndex(SeguimientoBBDD.SeguimientoEntry.ID_SEGUIMIENTO)));
                         onItemClickListener.onItemClick(view,position,cursor2);
-
                     }
                 }
             });
@@ -83,11 +84,11 @@ public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlane
         }
     }
 
-    public AdaptadorPlanesPaciente(Context c,int idPaciente) {
+    public AdaptadorSeguimientoPaciente(Context c, int idPaciente) {
         this.context=c;
         this.idPaciente=idPaciente;
         this.pacienteBBDDHelper= new MyPhisioBBDDHelper(c);
-        cursor=pacienteBBDDHelper.getPlanesByPaciente(idPaciente);
+        cursor=pacienteBBDDHelper.getSeguimientoByPaciente(idPaciente);
         cursor.moveToFirst();
     }
 
@@ -96,7 +97,7 @@ public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlane
     @Override
     public int getItemCount() {
         pacienteBBDDHelper= new MyPhisioBBDDHelper(context);
-        return pacienteBBDDHelper.getPlanesByPaciente(idPaciente).getCount();
+        return pacienteBBDDHelper.getSeguimientoByPaciente(idPaciente).getCount();
     }
 
 
@@ -104,24 +105,21 @@ public class AdaptadorPlanesPaciente extends RecyclerView.Adapter<AdaptadorPlane
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_lista_plan, viewGroup, false);
+                .inflate(R.layout.item_lista_seguimiento, viewGroup, false);
         return new ViewHolder(v,context,idPaciente);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int i) {
-        Log.e("Count-->",Integer.toString(pacienteBBDDHelper.getPlanesByPaciente(idPaciente).getCount()));
         if(i==0){
             cursor.moveToFirst();
         }
         if(cursor.getCount()>i){
-            Glide.with(viewHolder.itemView.getContext())
-                    .load(R.drawable.material_background)
-                    .centerCrop()
-                    .into(viewHolder.imagen);
-            viewHolder.nombre.setText(cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.NOMBRE)));
-            viewHolder.categoria.setText(cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.CATEGORIA)));
-            viewHolder.dias.setText((cursor.getString(cursor.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.DIAS))+"  "));
+            viewHolder.nombrePlan.setText(cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.NOMBRE)));
+            int satis=cursor.getInt(cursor.getColumnIndex(SeguimientoBBDD.SeguimientoEntry.SATISFACCION));
+
+            viewHolder.satisfaccion.setRating(satis);
+            viewHolder.fecha.setText((cursor.getString(cursor.getColumnIndex(SeguimientoBBDD.SeguimientoEntry.FECHA))));
             cursor.moveToNext();
 
         }

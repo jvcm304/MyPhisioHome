@@ -20,6 +20,7 @@ import android.widget.AdapterView;
 import com.myphisiohome.myphisiohome.AsyncTask.EjerciciosTask;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.BBDD.PlanBBDD;
+import com.myphisiohome.myphisiohome.BBDD.PlanesUsuarioBBDD;
 import com.myphisiohome.myphisiohome.Clases.Ejercicio;
 import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
 import com.myphisiohome.myphisiohome.Clases.Plan;
@@ -78,7 +79,7 @@ public class FragmentPlanesPaciente extends Fragment   {
             if(idPaciente==0){
                 aux=1;
             }
-            fab.hide();
+            fab.show();
             refreshLayout.setEnabled(false);
         }else if(prefs.getBoolean("PREF_PACIENTE_LOGGED",false)){
             idPaciente=prefs.getInt("PREF_PACIENTE_ID",0);
@@ -117,11 +118,29 @@ public class FragmentPlanesPaciente extends Fragment   {
                 //FragmentManager fragmentManager = getSupportFragmentManager();
                 Bundle args = new Bundle();
                 plan.moveToFirst();
+                String dias="";
+                Float tiempo;
+                tiempo=plan.getFloat(plan.getColumnIndex(PlanBBDD.PlanEntry.TIEMPO));
+                int vueltas=0;
+
+                if(aux==2){
+                    //Desde admin paciente
+                    dias=plan.getString(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.DIAS));
+                    tiempo=plan.getFloat(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.TIEMPO));
+                    vueltas=plan.getInt(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.SERIES));
+
+                }else if(aux==3){
+                    //Desde paciente
+                    dias=plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.DIAS));
+                    vueltas=plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.SERIES));
+                    tiempo=plan.getFloat(plan.getColumnIndex(PlanBBDD.PlanEntry.TIEMPO));
+                }
                 args.putInt("idPlan",plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.ID_PLAN)));
                 args.putString("nombre",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.NOMBRE)));
                 args.putString("categoria",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.CATEGORIA)));
-                args.putString("dias",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.DIAS)));
-                args.putInt("vueltas",plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.SERIES)));
+                args.putString("dias",dias);
+                args.putFloat("tiempo",tiempo);
+                args.putInt("vueltas",vueltas);
                 args.putInt("aux",aux);
 
                 fragment.setArguments(args);

@@ -216,16 +216,28 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 "AND planes.idPlan=planesusuarios.idPlan; ",  args);
         return c;
     }
+    public Cursor getSeguimientoByPaciente(int idPaciente) {
+        String[] args = new String[] {Integer.toString(idPaciente)};
+        Cursor c = getReadableDatabase().rawQuery( "SELECT * FROM seguimiento, planesusuarios,planes" +
+                " WHERE planesusuarios.idPaciente=?"+
+                "AND seguimiento.idPU=planesusuarios.idPU " +
+                "AND planesusuarios.idPlan=planes.idPlan; ",  args);
+        return c;
+    }
+    public Cursor getSeguimientoById(int idSeguimiento) {
+        String[] args = new String[] {Integer.toString(idSeguimiento)};
+        Cursor c = getReadableDatabase().rawQuery( "SELECT * FROM seguimiento, planesusuarios,planes" +
+                " WHERE seguimiento.idSeguimiento=?"+
+                "AND seguimiento.idPU=planesusuarios.idPU " +
+                "AND planesusuarios.idPlan=planes.idPlan  ; ",  args);
+        return c;
+    }
 
     public Cursor getPlanById(int idPlan) {
-        Cursor c = getReadableDatabase().query(
-                PlanBBDD.PlanEntry.TABLE_NAME,
-                null,
-                PlanBBDD.PlanEntry.ID_PLAN + " LIKE ?",
-                new String[]{Integer.toString(idPlan)},
-                null,
-                null,
-                null);
+
+        String[] args = new String[] {Integer.toString(idPlan)};
+        Cursor c = getReadableDatabase().rawQuery( "SELECT * FROM planes, planesusuarios WHERE planes.idPlan=? "+
+                "AND planes.idPlan=planesusuarios.idPlan; ",  args);
         return c;
     }
     public Cursor getEjercicioById(int idEjercicio) {

@@ -168,19 +168,24 @@ public class DialogAddEditPaciente extends DialogFragment {
 
         switch (requestCode){
             case SELECTED_PICTURE:
-                Uri uri=data.getData();
-                String[]projection={MediaStore.Images.Media.DATA};
+                try {
+                    Uri uri=data.getData();
+                    String[]projection={MediaStore.Images.Media.DATA};
 
-                Cursor cursor=getActivity().getContentResolver().query(uri,projection,null,null,null);
-                cursor.moveToFirst();
+                    Cursor cursor=getActivity().getContentResolver().query(uri,projection,null,null,null);
+                    cursor.moveToFirst();
 
-                int columIndex=cursor.getColumnIndex(projection[0]);
-                filePath=cursor.getString(columIndex);
-                cursor.close();
-                Bitmap yourSlectedImage=BitmapFactory.decodeFile(filePath);
+                    int columIndex=cursor.getColumnIndex(projection[0]);
+                    filePath=cursor.getString(columIndex);
+                    cursor.close();
+                    Bitmap yourSlectedImage=BitmapFactory.decodeFile(filePath);
 
-                d=resizeImage(yourSlectedImage);//new BitmapDrawable(yourSlectedImage);
-                mImageButton.setImageDrawable(d);
+                    d=resizeImage(yourSlectedImage);//new BitmapDrawable(yourSlectedImage);
+                    mImageButton.setImageDrawable(d);
+                }catch (NullPointerException e){
+
+                }
+
                 break;
             default:
 

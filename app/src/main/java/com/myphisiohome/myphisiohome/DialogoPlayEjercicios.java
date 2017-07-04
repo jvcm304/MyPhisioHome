@@ -7,6 +7,8 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -33,8 +35,11 @@ import android.widget.Toast;
 import com.myphisiohome.myphisiohome.AsyncTask.DownloadImageTask;
 import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
+import com.myphisiohome.myphisiohome.Clases.Ejercicio;
 import com.myphisiohome.myphisiohome.Clases.Plan;
 import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
+
+import java.util.ArrayList;
 
 /**
  * Created by Vicente on 9/6/17.
@@ -57,6 +62,11 @@ public class DialogoPlayEjercicios extends DialogFragment {
     private int idPaciente;
     private int idPU;
     private Bundle args;
+    private int contador=0;
+    private Float tiempo;
+    private SoundPool soundPool;
+    int pito1;
+    ArrayList<Ejercicio> ejercicios2=new ArrayList<Ejercicio>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,6 +82,8 @@ public class DialogoPlayEjercicios extends DialogFragment {
             // Cambiar icono del Up Button
             actionBar.setHomeAsUpIndicator(R.drawable.ic_close);
         }
+        soundPool = new SoundPool(5, AudioManager.STREAM_MUSIC,0);
+        pito1=soundPool.load(getActivity(),R.raw.pg01448,0);
     }
 
     @Override
@@ -80,6 +92,7 @@ public class DialogoPlayEjercicios extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_play, container, false);
         idPlan=getArguments().getInt("idPlan");
         series=getArguments().getInt("series");
+        tiempo=getArguments().getFloat("tiempo");
         SharedPreferences prefs = this.getActivity().getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
         idPaciente=prefs.getInt("PREF_PACIENTE_ID",0);
         myPhisioBBDDHelper=new MyPhisioBBDDHelper(getActivity());
@@ -112,36 +125,22 @@ public class DialogoPlayEjercicios extends DialogFragment {
 
     private void playPlan(Cursor cursor, int series) {
         int aux=0;
-        for(int i=0;i<series;i++){
-            cursor.moveToFirst();
-            if(cursor.getCount()>0) {
-                do {
-                    nombre.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.NOMBRE)));
-                    //categoria.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.CATEGORIA)));
-                    downloadImageTask=new DownloadImageTask(imagen,null,1);
-                    downloadImageTask.execute(urlImagenes+cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)));
-                    if (cursor.getInt(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPO)) == 1) {
-                        Float segundos= Float.valueOf(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.REPETICIONES)));
-                        segundos=segundos*1000;
-                        cuentaAtras(Math.round(segundos),1000);//Math.round(segundos),1000);
-                        tipo.setText("Segundos restantes:");
-                        Log.e("Prueba-->","entra");
-                        esperar=1;
-                        esperar(Math.round(segundos));
-                        Log.e("Prueba-->","vuelve");
-                    } else {
-                        tipo.setText("Repeticiones restantes:");
-                        Float segundos= Float.valueOf(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.REPETICIONES)));
-                        segundos=segundos*1000;
-                        String segun=Float.toString(segundos);
-                        cuentaAtras(Math.round(segundos),3000);
-                    }
-                    tips.setText(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPS)));
-                } while (cursor.moveToNext() && esperar==0);
-            }
-
+        ArrayList<Ejercicio> ejercicios = new ArrayList<Ejercicio>();
+        Ejercicio ejercicio;
+        //cuentaAtras(Math.round(segundos),1000,cursor);//Math.round(segundos),1000);
+        cursor.moveToFirst();
+        for(int i=0;i<cursor.getCount();i++){
+            ejercicio=new Ejercicio(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.NOMBRE)),
+                    cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPS)),
+                    cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.CATEGORIA)),
+                    cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)),
+                    cursor.getInt(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPO)),
+                    Float.valueOf(cursor.getString(cursor.getColumnIndex(EjercicioBBDD.EjercicioEntry.REPETICIONES))));
+            ejercicios.add(ejercicio);
+            cursor.moveToNext();
         }
 
+        cuentaAtras(ejercicios,series,0);
     }
 
     public void seguimiento(int aux){
@@ -165,25 +164,99 @@ public class DialogoPlayEjercicios extends DialogFragment {
             }
         }, milisegundos);
     }
-    public void cuentaAtras(int milisegundos,int intervalo){
+
+
+    public void cuentaAtras(ArrayList<Ejercicio> ejercicios,int series,int aux){
+
+        if(aux==0){
+            for(int i=0;i<series;i++){
+                for(int j=0;j<ejercicios.size();j++){
+                    ejercicios2.add(ejercicios.get(j));
+                }
+            }
+        }
+
+        if(contador<ejercicios2.size()){
+            if(contador==ejercicios2.size()-1){
+                CountDownTimer(0, 0,ejercicios2.get(contador),null);
+            }else{
+                CountDownTimer(0, 0,ejercicios2.get(contador),ejercicios2.get(contador+1));
+            }
+        }
+        if(contador==ejercicios2.size()) {
+            seguimiento(1);
+        }
+
+
+
+
+    }
+
+
+    public void CountDownTimer(int milisegundos, int intervalo, final Ejercicio ejercicio, Ejercicio ejercicio2){
+
+        nombre.setText(ejercicio.getNombre());
+        tips.setText(ejercicio.getTips());
+        downloadImageTask= new DownloadImageTask(imagen,null,1);
+        downloadImageTask.execute(urlImagenes+ejercicio.getImagen());
+
+        if(ejercicio.getTipo()==1){
+            intervalo=1000;
+            tipo.setText("Segundos restantes:");
+        }else{
+            tipo.setText("Repeteciones restantes:");
+            intervalo=1000;
+        }
+        milisegundos=Math.round(ejercicio.getRepeticiones()*1000);
 
         new CountDownTimer(milisegundos, intervalo) {
 
             public void onTick(long millisUntilFinished) {
+                if((millisUntilFinished / 1000)==2){
+                    soundPool.play(pito1,1,1,1,0,1);
+                }
                 repeticiones.setText(""+millisUntilFinished / 1000);
             }
 
             public void onFinish() {
                 tipo.setText("");
                 repeticiones.setText("Ejercicio finalizado!");
-
-                seguimiento(1);
+                contador++;
+                CountDownTimerEspera(0,tiempo);
 
 
 
             }
         }.start();
+    }
+    public void CountDownTimerEspera(int milisegundos,float segundos ){
 
+        nombre.setText("Descanso");
+        tips.setText("Tomese un descanso");
+        imagen.setImageDrawable(getResources().getDrawable(R.drawable.descanso));
+
+
+        tipo.setText("Segundos restantes:");
+
+        milisegundos=Math.round(segundos*1000);
+
+        new CountDownTimer(milisegundos, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                if((millisUntilFinished / 1000)==2){
+                    soundPool.play(pito1,1,1,1,0,1);
+                }
+                repeticiones.setText(""+millisUntilFinished / 1000);
+            }
+
+            public void onFinish() {
+                tipo.setText("");
+                repeticiones.setText("Ejercicio finalizado!");
+                cuentaAtras(null,0,1);
+
+
+            }
+        }.start();
     }
 
 }

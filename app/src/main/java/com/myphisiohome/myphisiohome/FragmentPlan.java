@@ -38,6 +38,7 @@ public class FragmentPlan extends Fragment {
     private static String diasString;
     private ImageView imagen;
     private int aux;
+    private Float tiempo;
 
     public FragmentPlan() {
 
@@ -59,9 +60,10 @@ public class FragmentPlan extends Fragment {
         this.idPlan=getArguments().getInt("idPlan");
         this.categoria=getArguments().getString("categoria");
         this.titulo=getArguments().getString("nombre");
+        this.tiempo=getArguments().getFloat("tiempo");
         vueltas.setText("Series: "+Integer.toString(getArguments().getInt("vueltas")));
-        this.diasString=getArguments().getString("dias");
-        dias.setText(reemplazarDias(diasString));
+        this.diasString=getArguments().getString("dias")+"   ";
+        dias.setText((diasString));
         aux=getArguments().getInt("aux");
         categoriaTV.setText(categoria);
         collapser.setTitle(titulo); // Cambiar título
@@ -80,7 +82,8 @@ public class FragmentPlan extends Fragment {
         final Bundle args = new Bundle();
         args.putInt("idPlan",idPlan);
         args.putInt("series", getArguments().getInt("vueltas"));
-        Log.e("Play-->",Integer.toString(aux));
+        args.putFloat("tiempo",tiempo);
+        Log.e("Play tiempo-->",tiempo +"");
         if(aux==2){
             fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_grey));
             //Borrar planUsaurio
@@ -154,38 +157,5 @@ public class FragmentPlan extends Fragment {
         activity.getSupportActionBar();
 
     }
-    public static String reemplazarDias(String dias){
-        String diasOK="l-m-x-j-v-s-d   ";
-        String diasOK2=null;
-        if(diasString.contains("L")){
-            diasOK2=diasOK.replace('l','L');
 
-        }
-        if(diasString.contains("M")){
-            diasOK2=diasOK.replace('m','M');
-
-        }
-        if(diasString.contains("X")){
-            diasOK2=diasOK.replace('x','X');
-
-        }
-        if(diasString.contains("J")){
-            diasOK2=diasOK.replace('j','J');
-
-        }
-        if(diasString.contains("V")){
-            diasOK2=diasOK.replace('v','V');
-
-        }
-        if(diasString.contains("S")){
-            diasOK2=diasOK.replace('s','S');
-
-        }
-        if(diasString.contains("D")){
-            diasOK2=diasOK.replace('d','D');
-
-        }
-
-        return diasOK2;
-    }
 }

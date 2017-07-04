@@ -75,6 +75,7 @@ public class DialogoSegEjercicios extends DialogFragment {
         comentarios=(TextInputEditText) view.findViewById(R.id.edit_seg_comentarios);
         fecha = (TextView) view.findViewById(R.id.seg_fecha);
         ratingBar = (RatingBar) view.findViewById(R.id.seg_ratingBar);
+        ratingBar.setMax(5);
         Calendar calendar= new GregorianCalendar();
         String calen=Integer.toString(calendar.get(Calendar.HOUR_OF_DAY))+
                 Integer.toString(calendar.get(Calendar.MINUTE))+Integer.toString(calendar.get(Calendar.SECOND));

@@ -417,8 +417,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                                     JSONObject planes= planesA.getJSONObject(j);
                                     int idPlan2=planes.getInt("idPlan");
                                     String nombre=planes.getString("nombre");
-                                    float tiempo=Float.valueOf(planes.getString("tiempo"));
-                                    int series=planes.getInt("series");
+                                    float tiempo=Float.valueOf(planUsuario.getString("tiempo"));
+                                    int series=planUsuario.getInt("series");
                                     String descripcion=planes.getString("descripcion");
                                     String categoria=planes.getString("categoria");
                                     plan=new Plan(idPlan2,nombre,descripcion,categoria,series,tiempo,dias);

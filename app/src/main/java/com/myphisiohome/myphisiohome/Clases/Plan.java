@@ -43,6 +43,13 @@ public class Plan {
         this.tiempo=tiempo;
 
     }
+    public Plan(int idPlan, String nombre, String descipcion,String categoria
+                ){
+        this.descipcion=descipcion;
+        this.idPlan=idPlan;
+        this.nombre=nombre;
+        this.categoria=categoria;
+    }
 
     public int getIdPlan() {
         return idPlan;

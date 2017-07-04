@@ -48,7 +48,6 @@ public class FragmentPlanes extends Fragment   {
     private RecyclerView reciclador;
     private LinearLayoutManager layoutManager;
     private AdaptadorPlanes adaptador;
-    private Cursor cursorPlan;
     private AdapterView.OnItemClickListener onItemClickListener;
     private SwipeRefreshLayout refreshLayout;
     private MyPhisioBBDDHelper pacienteBBDDHelper;
@@ -57,8 +56,6 @@ public class FragmentPlanes extends Fragment   {
 
     private PlanesUsuario planesUsuario;
     private Plan plan;
-    private EjercicioPlanes ejercicioPlanes;
-    private Ejercicio ejercicio;
     private int idPaciente;
     Bundle arg= new Bundle();
 
@@ -119,6 +116,7 @@ public class FragmentPlanes extends Fragment   {
                 args.putString("categoria",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.CATEGORIA)));
                 args.putString("dias",plan.getString(plan.getColumnIndex(PlanBBDD.PlanEntry.DIAS)));
                 args.putInt("vueltas",plan.getInt(plan.getColumnIndex(PlanBBDD.PlanEntry.SERIES)));
+                args.putFloat("tiempo",plan.getFloat(plan.getColumnIndex(PlanBBDD.PlanEntry.TIEMPO)));
                 args.putInt("aux", 1);
                 fragment.setArguments(args);
 

@@ -47,6 +47,17 @@ public class Ejercicio {
 
 
     }
+    public Ejercicio( String nombre,  String tips,
+                     String categoria, String imagen, int tipo,float repeticiones){
+        this.nombre=nombre;
+        this.tips=tips;
+        this.categoria=categoria;
+        this.imagen=imagen;
+        this.tipo=tipo;
+        this.repeticiones=repeticiones;
+
+
+    }
 
 
     public int getIdEjercicio() {
