@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.myphisiohome.myphisiohome.Clases.Ejercicio;
-import com.myphisiohome.myphisiohome.Clases.Seguimiento;
+import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
+import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -21,16 +21,18 @@ import org.json.JSONObject;
  * Created by Vicente on 14/6/17.
  */
 
-public class AddSeguimientoServidor extends AsyncTask<Void, Object, String> {
+public class AddPlanEjercicioServidor extends AsyncTask<Void, Object, String> {
 
     String URLAPI="http://myphisio.digitalpower.es/v1/";
-    Seguimiento seguimiento;
+    EjercicioPlanes ejercicioPlanes;
+
     private int estado;
     private Context context;
 
-    public AddSeguimientoServidor(Seguimiento seguimiento, Context context){
-        this.seguimiento=seguimiento;
+    public AddPlanEjercicioServidor(EjercicioPlanes ejercicioPlanes, Context context){
+        this.ejercicioPlanes=ejercicioPlanes;
         this.context=context;
+
     }
 
     @Override
@@ -50,7 +52,7 @@ public class AddSeguimientoServidor extends AsyncTask<Void, Object, String> {
 
 
         try {
-            String url_completa = URLAPI+"seguimiento/"+seguimiento.getIdPU();
+            String url_completa = URLAPI+"ejerciciosPlanes/"+ejercicioPlanes.getIdPlan()+"/"+ejercicioPlanes.getIdEjercicio();
             //Creando cliente http
             HttpClient httpclient = new DefaultHttpClient();
             HttpPost httpPost = new HttpPost(url_completa);
@@ -58,11 +60,9 @@ public class AddSeguimientoServidor extends AsyncTask<Void, Object, String> {
 
             try{
                 JSONObject dato = new JSONObject();
-                dato.put("idSeguimiento",seguimiento.getIdSeguimiento());
-                dato.put("idPU", seguimiento.getIdPU());
-                dato.put("satisfaccion", seguimiento.getSatisfaccion());
-                dato.put("comentarios", seguimiento.getComentarios());
-                dato.put("fecha", seguimiento.getFecha());
+                dato.put("idEP",ejercicioPlanes.getIdEP());
+                dato.put("repeticiones", ejercicioPlanes.getRepeticiones());
+
 
 
                 StringEntity entity = new StringEntity(dato.toString());
@@ -72,22 +72,23 @@ public class AddSeguimientoServidor extends AsyncTask<Void, Object, String> {
                 JSONObject respJSON = new JSONObject(respStr);
                 //estado = respJSON.getInt("estado");
                 httpclient.getConnectionManager().shutdown();
+
                 if (resp.getStatusLine().getStatusCode() == 201){//Status = Created
-                    return ("Seguimiento correctamente");
+                    return ("Se ha asignado el ejercicio al plan correctamente");
                 }
                 else{
-                    return ("Error Seguimiento (1)");
+                    return ("Error Plan (1)");
                 }
 
             }catch (JSONException e){
                 Log.e("ServicioRest","Error!", e);
-                return ("Error Seguimiento (2)");
+                return ("Error Plan (2)");
 
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ("Error Seguimiento (3)");
+            return ("Error Plan (3)");
         }
 
     }

@@ -240,6 +240,13 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 "AND planes.idPlan=planesusuarios.idPlan; ",  args);
         return c;
     }
+    public Cursor getPlanById2(int idPlan) {
+
+        String[] args = new String[] {Integer.toString(idPlan)};
+        Cursor c = getReadableDatabase().rawQuery( "SELECT * FROM planes WHERE planes.idPlan=? "
+                ,  args);
+        return c;
+    }
     public Cursor getEjercicioById(int idEjercicio) {
         Cursor c = getReadableDatabase().query(
                 EjercicioBBDD.EjercicioEntry.TABLE_NAME,
@@ -275,6 +282,68 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
                 EjercicioBBDD.EjercicioEntry.TABLE_NAME,
                 EjercicioBBDD.EjercicioEntry.ID_EJERCICIO + " LIKE ?",
                 new String[]{Integer.toString(idEjercicio)});
+    }
+
+    public int deletePlanPacienteidPU(int idPU) {
+
+        return getWritableDatabase().delete(
+                PlanesUsuarioBBDD.PlanesUsuarioEntry.TABLE_NAME,
+                PlanesUsuarioBBDD.PlanesUsuarioEntry.ID_PU + " LIKE ?",
+                new String[]{Integer.toString(idPU)});
+    }
+    public int deletePlanPacienteidPaciente(int idPaciente) {
+
+        return getWritableDatabase().delete(
+                PlanesUsuarioBBDD.PlanesUsuarioEntry.TABLE_NAME,
+                PlanesUsuarioBBDD.PlanesUsuarioEntry.ID_PACIENTE + " LIKE ?",
+                new String[]{Integer.toString(idPaciente)});
+    }
+    public int deletePlanPacienteidPlan(int idPlan) {
+
+        return getWritableDatabase().delete(
+                PlanesUsuarioBBDD.PlanesUsuarioEntry.TABLE_NAME,
+                PlanesUsuarioBBDD.PlanesUsuarioEntry.ID_PLAN + " LIKE ?",
+                new String[]{Integer.toString(idPlan)});
+    }
+    public int deletePlan(int idPlan) {
+
+        return getWritableDatabase().delete(
+                PlanBBDD.PlanEntry.TABLE_NAME,
+                PlanBBDD.PlanEntry.ID_PLAN + " LIKE ?",
+                new String[]{Integer.toString(idPlan)});
+    }
+
+    public int deleteEjercicioPlan(int idEjercicio) {
+        return getWritableDatabase().delete(
+                EjerciciosPlanesBBDD.EjerciciosPlanesEntry.TABLE_NAME,
+                EjerciciosPlanesBBDD.EjerciciosPlanesEntry.ID_EJERCICIO + " LIKE ?",
+                new String[]{Integer.toString(idEjercicio)});
+    }
+    public int deletePlanEjercicio(int idPlan) {
+        return getWritableDatabase().delete(
+                EjerciciosPlanesBBDD.EjerciciosPlanesEntry.TABLE_NAME,
+                EjerciciosPlanesBBDD.EjerciciosPlanesEntry.ID_PLAN + " LIKE ?",
+                new String[]{Integer.toString(idPlan)});
+    }
+
+    public int deleteSeguimiento(int idPU){
+        return getWritableDatabase().delete(
+                SeguimientoBBDD.SeguimientoEntry.TABLE_NAME,
+                SeguimientoBBDD.SeguimientoEntry.ID_PU + " LIKE ?",
+                new String[]{Integer.toString(idPU)});
+    }
+    public int deleteSeguimiento2(int idPlan){
+        String sql=("DELETE  FROM seguimiento WHERE  idPU=(SELECT idPU FROM planesusuarios WHERE idPlan="+idPlan+")");
+        Log.e("idPlan:   ",""+idPlan  );
+        Log.e("SQL:   ",sql  );
+        getWritableDatabase().execSQL(sql);
+        return idPlan;
+    }
+    public int deleteSeguimiento3(int idPaciente){
+        String sql=("DELETE  FROM seguimiento WHERE  idPU=(SELECT idPU FROM planesusuarios WHERE idPaciente="+idPaciente+")");
+        Log.e("SQL:   ",sql  );
+        getWritableDatabase().execSQL(sql);
+        return idPaciente;
     }
 
 

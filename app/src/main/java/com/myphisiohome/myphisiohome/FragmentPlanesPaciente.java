@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -58,6 +59,7 @@ public class FragmentPlanesPaciente extends Fragment   {
     private int idPaciente;
     Bundle arg= new Bundle();
     private int aux;
+    private int idPU;
 
     public FragmentPlanesPaciente() {
     }
@@ -103,6 +105,20 @@ public class FragmentPlanesPaciente extends Fragment   {
 
             }
         });
+        fab.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Bundle args=new Bundle();
+                        args.putInt("idPaciente",idPaciente);
+                        DialogFragment dialogFragment=new DialogoAddPlanPaciente();
+                        dialogFragment.setArguments(args);
+                        dialogFragment.show(getFragmentManager(),"DialogoAddPlanPaciente");
+
+                    }
+                }
+        );
+
 
         ((AdaptadorPlanesPaciente) adaptador).setOnItemClickListener(new AdaptadorPlanesPaciente.OnItemClickListener() {
             @Override
@@ -128,6 +144,8 @@ public class FragmentPlanesPaciente extends Fragment   {
                     dias=plan.getString(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.DIAS));
                     tiempo=plan.getFloat(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.TIEMPO));
                     vueltas=plan.getInt(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.SERIES));
+                    idPU=plan.getInt(plan.getColumnIndex(PlanesUsuarioBBDD.PlanesUsuarioEntry.ID_PU));
+                    args.putInt("idPU",idPU);
 
                 }else if(aux==3){
                     //Desde paciente
@@ -142,6 +160,9 @@ public class FragmentPlanesPaciente extends Fragment   {
                 args.putFloat("tiempo",tiempo);
                 args.putInt("vueltas",vueltas);
                 args.putInt("aux",aux);
+
+                args.putInt("idPaciente",idPaciente);
+
 
                 fragment.setArguments(args);
 

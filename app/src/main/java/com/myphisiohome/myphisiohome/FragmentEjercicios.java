@@ -91,7 +91,6 @@ public class FragmentEjercicios extends Fragment   {
                 Fragment fragment=new FragmentEjercicioP();
                 Bundle args = new Bundle();
                 ejercicio.moveToFirst();
-                Log.e("IdEjercico seleccionado:",Integer.toString(ejercicio.getInt(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.ID_EJERCICIO))));
 
                 args.putInt("idEjercicio",ejercicio.getInt(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.ID_EJERCICIO)));
                 args.putString("nombre",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.NOMBRE)));
@@ -99,7 +98,7 @@ public class FragmentEjercicios extends Fragment   {
                 args.putString("categoria",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.CATEGORIA)));
                 args.putString("descripcion",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.DESCRIPCION)));
                 args.putString("tips",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPS)));
-
+                args.putInt("aux",1);
 
                 fragment.setArguments(args);
 

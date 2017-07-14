@@ -86,21 +86,6 @@ public class FragmentPacientes extends Fragment   {
 
         adaptador = new AdaptadorPacientes(getActivity());
         pacienteBBDDHelper2=new MyPhisioBBDDHelper(getActivity());
-        /*refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener(){
-
-            @Override
-            public void onRefresh() {
-
-                reciclador.setEnabled(false);
-                reciclador.setClickable(false);
-                pacienteBBDDHelper2.refrescar();
-                FragmentPlanes.PlanesPacienteTask planesPacientesTask= new FragmentPlanes.PlanesPacienteTask( prefs.getInt("PREF_PACIENTE_ID",0));
-                planesPacientesTask.execute();
-
-
-
-            }
-        });*/
 
         ((AdaptadorPacientes) adaptador).setOnItemClickListener(new AdaptadorPacientes.OnItemClickListener() {
             @Override
@@ -143,117 +128,6 @@ public class FragmentPacientes extends Fragment   {
 
         startActivity(new Intent(getActivity(),AddPacienteActivity.class));
     }
-
-    /*public class PlanesPacienteTask extends AsyncTask<Void, Void, Integer> {
-
-        private Integer estado;
-        private String mensaje;
-
-        //datos ejercicios planes
-        //private EjercicioPlanes ejercicioPlanes;
-        //private Ejercicio ejercicio;
-        private int resul;
-        private int idPaciente;
-        private ArrayList<Integer> idPlanes=new ArrayList<Integer>();
-
-        PlanesPacienteTask(int idPaciente) {
-            this.idPaciente=idPaciente;
-        }
-        @Override
-        protected void onPreExecute(){
-
-
-        }
-        @Override
-        protected Integer doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
-            pacienteBBDDHelper= new MyPhisioBBDDHelper(getActivity());
-            //
-            int resul=0;
-            Log.e("ID paciente desde planes: ",Integer.toString(idPaciente));
-            String URLAPI="http://myphisio.digitalpower.es/v1/";
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet getPlanesPaciente =
-                    new HttpGet(URLAPI+"planesUsuario/paciente/"+Integer.toString(idPaciente));
-            //Planes
-
-
-
-            try
-            {
-                HttpResponse respPlanesPaciente = httpClient.execute(getPlanesPaciente);
-                String respStrPlanesPaciente = EntityUtils.toString(respPlanesPaciente.getEntity());
-                //
-                JSONObject respJSON2 = new JSONObject(respStrPlanesPaciente);
-                int estado2 = respJSON2.getInt("estado");
-                resul=estado2;
-                if(estado2==1){
-                    JSONArray planesPaciente = respJSON2.getJSONArray("datos");
-                    for (int i=0; i<planesPaciente.length() ;i++){
-                        JSONObject planUsuario= planesPaciente.getJSONObject(i);
-                        int idPU=planUsuario.getInt("idPU");
-                        int idPlan=planUsuario.getInt("idPlan");
-                        String dias=planUsuario.getString("dias");
-                        //crear Plan
-                        HttpGet getPlanes =
-                                new HttpGet(URLAPI+"planes/"+idPlan);
-                        HttpResponse respPlanes = httpClient.execute(getPlanes);
-                        String respStrPlanes = EntityUtils.toString(respPlanes.getEntity());
-                        JSONArray planesA = new JSONArray(respStrPlanes);
-                        for (int j=0; j<planesA.length() ;j++){
-                            JSONObject planes= planesA.getJSONObject(j);
-                            int idPlan2=planes.getInt("idPlan");
-                            String nombre=planes.getString("nombre");
-                            float tiempo=Float.valueOf(planes.getString("tiempo"));
-                            int series=planes.getInt("series");
-                            String descripcion=planes.getString("descripcion");
-                            String categoria=planes.getString("categoria");
-                            plan=new Plan(idPlan2,nombre,descripcion,categoria,series,tiempo,dias);
-                            idPlanes.add(idPlan2);
-                            Log.e("ID PLAN desde planes: ",Integer.toString(idPlan2));
-                            pacienteBBDDHelper.savePlanes(plan);
-                        }
-                        //
-                        int idPaciente=planUsuario.getInt("idPaciente");
-                        float tiempo=Float.valueOf(planUsuario.getString("tiempo"));
-                        int series=planUsuario.getInt("series");
-
-                        planesUsuario=new PlanesUsuario(idPU,idPaciente,idPlan,tiempo,series,dias);
-                        pacienteBBDDHelper.savePlanesUsuarios(planesUsuario);
-
-                    }
-                }
-                //
-            }catch (JSONException e){
-                Log.e("ServicioRest","Error!", e);
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return resul;
-        }
-
-        @Override
-        protected void onPostExecute(final Integer success) {
-            LoginActivity login = new LoginActivity();
-
-            for(int i=0;i<idPlanes.size();i++){
-                EjerciciosTask ejerciciosTask = login.getEjerciciosTask(idPlanes.get(i),getActivity());
-                ejerciciosTask.execute();
-
-            }
-            // Parar la animación del indicador
-            refreshLayout.setRefreshing(false);
-            reciclador.setEnabled(true);
-            reciclador.setClickable(true);
-            adaptador = new AdaptadorPacientes(getActivity());
-            reciclador.setAdapter(adaptador);
-
-        }
-    }*/
-
 
 
 

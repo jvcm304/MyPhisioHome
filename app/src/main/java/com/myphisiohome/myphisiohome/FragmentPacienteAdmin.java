@@ -24,7 +24,11 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.myphisiohome.myphisiohome.AsyncTask.DeleteEjercicioPlanServidor;
 import com.myphisiohome.myphisiohome.AsyncTask.DeletePacienteServidor;
+import com.myphisiohome.myphisiohome.AsyncTask.DeletePlanPacienteServidor;
+import com.myphisiohome.myphisiohome.AsyncTask.DeletePlanServidor;
+import com.myphisiohome.myphisiohome.AsyncTask.DeleteSeguimientoServidor;
 import com.myphisiohome.myphisiohome.AsyncTask.DownloadImageTask;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 
@@ -43,6 +47,8 @@ public class FragmentPacienteAdmin extends android.support.v4.app.Fragment{
     private DownloadImageTask downloadImageTask=null;
     private DeletePacienteServidor deletePacienteServidor=null;
     private MyPhisioBBDDHelper myPhisioBBDDHelper;
+    private DeleteSeguimientoServidor deleteSeguimientoServidor=null;
+    private DeletePlanPacienteServidor deletePlanPacienteServidor=null;
     int idPaciente;
 
     private AppBarLayout appBar;
@@ -139,10 +145,25 @@ public class FragmentPacienteAdmin extends android.support.v4.app.Fragment{
 
 
     private void showSnackBar(String msg,View view) {
+
+
+
         myPhisioBBDDHelper=new MyPhisioBBDDHelper(getActivity());
+
+        myPhisioBBDDHelper.deleteSeguimiento3(idPaciente);
+        myPhisioBBDDHelper.deletePlanPacienteidPaciente(idPaciente);
         myPhisioBBDDHelper.deletePaciente(idPaciente);
+
+        deleteSeguimientoServidor= new DeleteSeguimientoServidor(0,0,idPaciente,getActivity(),3);
+        deleteSeguimientoServidor.execute();
+
+        deletePlanPacienteServidor= new DeletePlanPacienteServidor(0,0,idPaciente,getActivity(),3);
+        deletePlanPacienteServidor.execute();
+
+
         deletePacienteServidor= new DeletePacienteServidor(idPaciente,getActivity());
         deletePacienteServidor.execute();
+
         startActivity(new Intent(getActivity(),AdministradorActivity.class));
     }
 

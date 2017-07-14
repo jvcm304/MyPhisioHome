@@ -20,7 +20,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.myphisiohome.myphisiohome.AsyncTask.DeleteEjercicioPlanServidor;
+import com.myphisiohome.myphisiohome.AsyncTask.DeletePlanPacienteServidor;
+import com.myphisiohome.myphisiohome.AsyncTask.DeletePlanServidor;
+import com.myphisiohome.myphisiohome.AsyncTask.DeleteSeguimientoServidor;
 import com.myphisiohome.myphisiohome.BBDD.EjercicioBBDD;
+import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 
 /**
  * Created by Vicente on 31/5/17.
@@ -32,13 +37,22 @@ public class FragmentPlan extends Fragment {
     private LinearLayoutManager layoutManager;
     private AdaptadorEjerciciosPlan adaptador;
     private TextView categoriaTV, dias, vueltas;
+    private FloatingActionButton fad_add;
     private int idPlan;
     private String categoria;
     private String titulo;
     private static String diasString;
     private ImageView imagen;
     private int aux;
+    private int idPaciente;
+    private int idPU;
     private Float tiempo;
+    private int auxEjercicio=0;
+    private MyPhisioBBDDHelper myPhisioBBDDHelper;
+    private DeletePlanPacienteServidor deletePlanPacienteServidor=null;
+    private DeleteSeguimientoServidor deleteSeguimientoServidor=null;
+    private DeleteEjercicioPlanServidor deleteEjercicioPlanServidor=null;
+    private DeletePlanServidor deletePlanServidor=null;
 
     public FragmentPlan() {
 
@@ -56,7 +70,7 @@ public class FragmentPlan extends Fragment {
         imagen=(ImageView)view.findViewById(R.id.image_plan);
         CollapsingToolbarLayout collapser =
                 (CollapsingToolbarLayout) view.findViewById(R.id.collapserEjercicios);
-
+        fad_add=(FloatingActionButton) view.findViewById(R.id.fab_add);
         this.idPlan=getArguments().getInt("idPlan");
         this.categoria=getArguments().getString("categoria");
         this.titulo=getArguments().getString("nombre");
@@ -68,8 +82,8 @@ public class FragmentPlan extends Fragment {
         categoriaTV.setText(categoria);
         collapser.setTitle(titulo); // Cambiar título
         imagen.setImageDrawable(getResources().getDrawable(R.drawable.material_background));
-
-
+        idPaciente=getArguments().getInt("idPaciente");
+        idPU=getArguments().getInt("idPU");
 
         reciclador = (RecyclerView) view.findViewById(R.id.recicladorEjer);
         layoutManager = new LinearLayoutManager(getActivity());
@@ -83,16 +97,53 @@ public class FragmentPlan extends Fragment {
         args.putInt("idPlan",idPlan);
         args.putInt("series", getArguments().getInt("vueltas"));
         args.putFloat("tiempo",tiempo);
-        Log.e("Play tiempo-->",tiempo +"");
         if(aux==2){
             fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_grey));
+            fad_add.hide();
+            auxEjercicio=2;
             //Borrar planUsaurio
+            fab.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            deletePlanPaciente();
+
+                        }
+                    }
+            );
 
          }else if(aux==1){
+            fab.setImageDrawable(getResources().getDrawable(R.drawable.ic_delete_grey));
+            vueltas.setText("");
+            dias.setText("");
             //borrar plan, borrar planusuario y ejerciciosPlanes
+            fab.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                           deletePlan();
+
+                        }
+                    }
+            );
+
+            auxEjercicio=3;
+            fad_add.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            addEjerciciosPlan();
+
+
+                        }
+                    }
+            );
 
         }else if(aux==3){
-
+            auxEjercicio=0;
+            fad_add.setEnabled(false);
             fab.setOnClickListener(
                     new View.OnClickListener() {
                         @Override
@@ -127,7 +178,8 @@ public class FragmentPlan extends Fragment {
                 args.putString("descripcion",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.DESCRIPCION)));
                 args.putString("tips",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.TIPS)));
                 args.putString("imagen",ejercicio.getString(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.IMAGEN)));
-                args.putInt("aux",2);
+                args.putInt("aux",auxEjercicio);
+                args.putInt("idEjercicio",ejercicio.getInt(ejercicio.getColumnIndex(EjercicioBBDD.EjercicioEntry.ID_EJERCICIO)));
 
                 fragment.setArguments(args);
 
@@ -144,6 +196,59 @@ public class FragmentPlan extends Fragment {
 
         return view;
     }
+
+    private void deletePlan() {
+        myPhisioBBDDHelper=new MyPhisioBBDDHelper(getActivity());
+        myPhisioBBDDHelper.deleteSeguimiento2(idPlan);
+        myPhisioBBDDHelper.deletePlanPacienteidPlan(idPlan);
+        myPhisioBBDDHelper.deletePlanEjercicio(idPlan);
+        myPhisioBBDDHelper.deletePlan(idPlan);
+
+
+        deleteSeguimientoServidor= new DeleteSeguimientoServidor(0,idPlan,0,getActivity(),2);
+        deleteSeguimientoServidor.execute();
+
+        deletePlanPacienteServidor= new DeletePlanPacienteServidor(0,idPlan,0,getActivity(),2);
+        deletePlanPacienteServidor.execute();
+
+        deleteEjercicioPlanServidor=new DeleteEjercicioPlanServidor(0,idPlan,getActivity(),2);
+        deleteEjercicioPlanServidor.execute();
+
+        deletePlanServidor=new DeletePlanServidor(idPlan,getActivity());
+        deletePlanServidor.execute();
+
+        startActivity(new Intent(getActivity(),AdministradorActivity.class));
+
+
+
+    }
+
+    private void deletePlanPaciente() {
+
+        //delete seguimiento
+
+        myPhisioBBDDHelper=new MyPhisioBBDDHelper(getActivity());
+        myPhisioBBDDHelper.deleteSeguimiento(idPU);
+        deleteSeguimientoServidor= new DeleteSeguimientoServidor(idPU,0,0,getActivity(),1);
+        deleteSeguimientoServidor.execute();
+
+        //deletePlanUsuarios
+        myPhisioBBDDHelper.deletePlanPacienteidPU(idPU);
+        deletePlanPacienteServidor= new DeletePlanPacienteServidor(idPU,0,0,getActivity(),1);
+        deletePlanPacienteServidor.execute();
+        startActivity(new Intent(getActivity(),AdministradorActivity.class));
+    }
+
+    private void addEjerciciosPlan() {
+        Bundle args=new Bundle();
+        args.putInt("idPlan",idPlan);
+        DialogFragment dialogFragment=new DialogoAddEjercicioPlan();
+        dialogFragment.setArguments(args);
+        dialogFragment.show(getFragmentManager(),"DialogoAddEjercicioPlan");
+
+    }
+
+
     private void setToolbar(View view) {
         // Añadir la Toolbar
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);

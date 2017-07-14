@@ -131,18 +131,21 @@ public class AdministradorActivity extends AppCompatActivity {
     private void seleccionarItem(MenuItem itemDrawer) {
         Fragment fragmentoGenerico = null;
         FragmentManager fragmentManager = getSupportFragmentManager();
-
+        Bundle arg=new Bundle();
+        arg.putInt("aux",1);
         switch (itemDrawer.getItemId()) {
             case R.id.nav_paciente:
 
                 fragmentoGenerico = new FragmentPacientes();
                 break;
             case R.id.nav_planes:
-                //fragmentoGenerico = new FragmentPlanes2();
+                fragmentoGenerico = new FragmentPlanes();
+                fragmentoGenerico.setArguments(arg);
                 break;
 
             case R.id.nav_ejercicio:
                 fragmentoGenerico = new FragmentEjercicios();
+
                 break;
 
             case R.id.nav_log_out:

@@ -32,6 +32,7 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
     MyPhisioBBDDHelper pacienteBBDDHelper;
     Cursor cursor;
     private static OnItemClickListener onItemClickListener;
+    private int aux=0;
 
 
     public static interface OnItemClickListener {
@@ -56,8 +57,7 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
 
 
 
-
-        public ViewHolder(View v,Context c) {
+        public ViewHolder(View v, Context c) {
             super(v);
             this.contexto=c;
             nombre = (TextView) v.findViewById(R.id.nombre_plan);
@@ -75,7 +75,12 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
                     cursor.moveToPosition(position);
                     if(cursor.moveToPosition(position)){
 
-                        cursor2=pacienteBBDDHelper.getPlanById(cursor.getInt(cursor.getColumnIndex(PlanBBDD.PlanEntry.ID_PLAN)));
+
+                        cursor2=pacienteBBDDHelper.getPlanById2(cursor.getInt(cursor.getColumnIndex(PlanBBDD.PlanEntry.ID_PLAN)));
+
+
+
+
                         onItemClickListener.onItemClick(view,position,cursor2);
 
                     }
@@ -91,7 +96,13 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
         cursor=pacienteBBDDHelper.getAllPlanes();
         cursor.moveToFirst();
     }
-
+    public AdaptadorPlanes(Context c,int aux) {
+        this.context=c;
+        this.aux=aux;
+        this.pacienteBBDDHelper= new MyPhisioBBDDHelper(c);
+        cursor=pacienteBBDDHelper.getAllPlanes();
+        cursor.moveToFirst();
+    }
 
 
     @Override
@@ -104,8 +115,15 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.item_lista_plan, viewGroup, false);
+        View v;
+        if(aux==1){
+            v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item_lista_plan2, viewGroup, false);
+        }else{
+            v = LayoutInflater.from(viewGroup.getContext())
+                    .inflate(R.layout.item_lista_plan, viewGroup, false);
+        }
+
         return new ViewHolder(v,context);
     }
 
@@ -115,13 +133,16 @@ public class AdaptadorPlanes extends RecyclerView.Adapter<AdaptadorPlanes.ViewHo
             cursor.moveToFirst();
         }
         if(cursor.getCount()>i){
-            Glide.with(viewHolder.itemView.getContext())
-                    .load(R.drawable.material_background)
-                    .centerCrop()
-                    .into(viewHolder.imagen);
+
             viewHolder.nombre.setText(cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.NOMBRE)));
             viewHolder.categoria.setText(cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.CATEGORIA)));
-            viewHolder.dias.setText((cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.DIAS))+"  "));
+            if(aux!=1){
+                viewHolder.dias.setText((cursor.getString(cursor.getColumnIndex(PlanBBDD.PlanEntry.DIAS))+"  "));
+                Glide.with(viewHolder.itemView.getContext())
+                        .load(R.drawable.material_background)
+                        .centerCrop()
+                        .into(viewHolder.imagen);
+            }
             cursor.moveToNext();
 
         }
