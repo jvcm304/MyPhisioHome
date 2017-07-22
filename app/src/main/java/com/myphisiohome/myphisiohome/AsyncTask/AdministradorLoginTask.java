@@ -3,10 +3,9 @@ package com.myphisiohome.myphisiohome.AsyncTask;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.Toast;
 
-import com.myphisiohome.myphisiohome.AdministradorActivity;
+import com.myphisiohome.myphisiohome.Actividades.AdministradorActivity;
 import com.myphisiohome.myphisiohome.BBDD.MyPhisioBBDDHelper;
 import com.myphisiohome.myphisiohome.Clases.Ejercicio;
 import com.myphisiohome.myphisiohome.Clases.EjercicioPlanes;
@@ -14,8 +13,6 @@ import com.myphisiohome.myphisiohome.Clases.Paciente;
 import com.myphisiohome.myphisiohome.Clases.Plan;
 import com.myphisiohome.myphisiohome.Clases.PlanesUsuario;
 import com.myphisiohome.myphisiohome.Clases.Seguimiento;
-import com.myphisiohome.myphisiohome.LoginActivity;
-import com.myphisiohome.myphisiohome.PrincipalActivity;
 import com.myphisiohome.myphisiohome.prefs.SessionPrefs;
 
 import org.apache.http.HttpResponse;

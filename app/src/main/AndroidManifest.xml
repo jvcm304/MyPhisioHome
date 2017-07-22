@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".Actividades.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
 
@@ -28,26 +28,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PrincipalActivity"
+        <activity android:name=".Actividades.PrincipalActivity"
             android:screenOrientation="portrait">
 
         </activity>
-        <activity android:name=".AdministradorActivity"
+        <activity android:name=".Actividades.AdministradorActivity"
             android:screenOrientation="portrait">
 
         </activity>
-        <activity android:name=".AddEditPacienteActivity"
+        <activity android:name=".Actividades.AddEditPacienteActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity android:name=".AddPacienteActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
-        <activity android:name=".AddEjercicioActivity"
+        <activity android:name=".Actividades.AddPacienteActivity"
             android:screenOrientation="portrait">
 
         </activity>
-        <activity android:name=".PlayPlanActivity"
+        <activity android:name=".Actividades.AddEjercicioActivity"
+            android:screenOrientation="portrait">
+
+        </activity>
+        <activity android:name=".Actividades.PlayPlanActivity"
             android:screenOrientation="portrait">
 
         </activity>
