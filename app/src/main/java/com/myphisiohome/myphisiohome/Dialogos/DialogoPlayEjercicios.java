@@ -52,6 +52,7 @@ public class DialogoPlayEjercicios extends DialogFragment {
     private Float tiempo;
     private SoundPool soundPool;
     int pito1;
+    private int finalizar=1;
     ArrayList<Ejercicio> ejercicios2=new ArrayList<Ejercicio>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -130,6 +131,9 @@ public class DialogoPlayEjercicios extends DialogFragment {
     }
 
     public void seguimiento(int aux){
+        if(aux==0){
+            finalizar=0;
+        }
 
         args=new Bundle();
         args.putInt("idPU",idPU);
@@ -141,36 +145,42 @@ public class DialogoPlayEjercicios extends DialogFragment {
     }
 
     public void esperar(int milisegundos) {
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                // acciones que se ejecutan tras los milisegundos
-                esperar=0;
-                Log.e("Prueba-->","espera");
-            }
-        }, milisegundos);
+        if(finalizar==1) {
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                public void run() {
+                    // acciones que se ejecutan tras los milisegundos
+                    esperar = 0;
+                    Log.e("Prueba-->", "espera");
+                }
+            }, milisegundos);
+        }
     }
 
 
     public void cuentaAtras(ArrayList<Ejercicio> ejercicios,int series,int aux){
-
-        if(aux==0){
-            for(int i=0;i<series;i++){
-                for(int j=0;j<ejercicios.size();j++){
-                    ejercicios2.add(ejercicios.get(j));
+        if(finalizar==1) {
+            if (aux == 0) {
+                for (int i = 0; i < series; i++) {
+                    for (int j = 0; j < ejercicios.size(); j++) {
+                        ejercicios2.add(ejercicios.get(j));
+                    }
                 }
             }
-        }
 
-        if(contador<ejercicios2.size()){
-            if(contador==ejercicios2.size()-1){
-                CountDownTimer(0, 0,ejercicios2.get(contador),null);
-            }else{
-                CountDownTimer(0, 0,ejercicios2.get(contador),ejercicios2.get(contador+1));
+            if (contador < ejercicios2.size()) {
+                if (contador == ejercicios2.size() - 1) {
+                    CountDownTimer(0, 0, ejercicios2.get(contador), null);
+                } else {
+                    CountDownTimer(0, 0, ejercicios2.get(contador), ejercicios2.get(contador + 1));
+                }
             }
-        }
-        if(contador==ejercicios2.size()) {
-            seguimiento(1);
+            if (contador == ejercicios2.size()) {
+                if(finalizar==1){
+                    seguimiento(1);
+                }
+
+            }
         }
 
 
@@ -180,69 +190,75 @@ public class DialogoPlayEjercicios extends DialogFragment {
 
 
     public void CountDownTimer(int milisegundos, int intervalo, final Ejercicio ejercicio, Ejercicio ejercicio2){
+        if(finalizar==1) {
+            nombre.setText(ejercicio.getNombre());
+            tips.setText(ejercicio.getTips());
+            downloadImageTask = new DownloadImageTask(imagen, null, 1);
+            downloadImageTask.execute(urlImagenes + ejercicio.getImagen());
 
-        nombre.setText(ejercicio.getNombre());
-        tips.setText(ejercicio.getTips());
-        downloadImageTask= new DownloadImageTask(imagen,null,1);
-        downloadImageTask.execute(urlImagenes+ejercicio.getImagen());
+            if (ejercicio.getTipo() == 1) {
+                intervalo = 1000;
+                tipo.setText("Segundos restantes:");
+            } else {
+                tipo.setText("Repeteciones restantes:");
+                intervalo = 1000;
+            }
+            milisegundos = Math.round(ejercicio.getRepeticiones() * 1000);
 
-        if(ejercicio.getTipo()==1){
-            intervalo=1000;
-            tipo.setText("Segundos restantes:");
-        }else{
-            tipo.setText("Repeteciones restantes:");
-            intervalo=1000;
-        }
-        milisegundos=Math.round(ejercicio.getRepeticiones()*1000);
+            new CountDownTimer(milisegundos, intervalo) {
 
-        new CountDownTimer(milisegundos, intervalo) {
-
-            public void onTick(long millisUntilFinished) {
-                if((millisUntilFinished / 1000)==2){
-                    soundPool.play(pito1,1,1,1,0,1);
+                public void onTick(long millisUntilFinished) {
+                    if ((millisUntilFinished / 1000) == 2) {
+                        if(finalizar==1) {
+                            soundPool.play(pito1, 1, 1, 1, 0, 1);
+                        }
+                    }
+                    repeticiones.setText("" + millisUntilFinished / 1000);
                 }
-                repeticiones.setText(""+millisUntilFinished / 1000);
-            }
 
-            public void onFinish() {
-                tipo.setText("");
-                repeticiones.setText("Ejercicio finalizado!");
-                contador++;
-                CountDownTimerEspera(0,tiempo);
+                public void onFinish() {
+                    tipo.setText("");
+                    repeticiones.setText("Ejercicio finalizado!");
+                    contador++;
+                    CountDownTimerEspera(0, tiempo);
 
 
-
-            }
-        }.start();
+                }
+            }.start();
+        }
     }
     public void CountDownTimerEspera(int milisegundos,float segundos ){
+        if(finalizar==1){
+            nombre.setText("Descanso");
+            tips.setText("Tomese un descanso");
+            imagen.setImageDrawable(getResources().getDrawable(R.drawable.descanso));
 
-        nombre.setText("Descanso");
-        tips.setText("Tomese un descanso");
-        imagen.setImageDrawable(getResources().getDrawable(R.drawable.descanso));
 
+            tipo.setText("Segundos restantes:");
 
-        tipo.setText("Segundos restantes:");
+            milisegundos=Math.round(segundos*1000);
 
-        milisegundos=Math.round(segundos*1000);
+            new CountDownTimer(milisegundos, 1000) {
 
-        new CountDownTimer(milisegundos, 1000) {
-
-            public void onTick(long millisUntilFinished) {
-                if((millisUntilFinished / 1000)==2){
-                    soundPool.play(pito1,1,1,1,0,1);
+                public void onTick(long millisUntilFinished) {
+                    if((millisUntilFinished / 1000)==2){
+                        if(finalizar==1) {
+                            soundPool.play(pito1, 1, 1, 1, 0, 1);
+                        }
+                    }
+                    repeticiones.setText(""+millisUntilFinished / 1000);
                 }
-                repeticiones.setText(""+millisUntilFinished / 1000);
-            }
 
-            public void onFinish() {
-                tipo.setText("");
-                repeticiones.setText("Ejercicio finalizado!");
-                cuentaAtras(null,0,1);
+                public void onFinish() {
+                    tipo.setText("");
+                    repeticiones.setText("Ejercicio finalizado!");
+                    cuentaAtras(null,0,1);
 
 
-            }
-        }.start();
-    }
+                }
+            }.start();
+        }
+        }
+
 
 }

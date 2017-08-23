@@ -34,7 +34,7 @@ public class MyPhisioBBDDHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE pacientes (" +
                 "   idPaciente INTEGER NOT NULL," +
                 "   nombre TEXT NOT NULL," +
-                "   email TEXT NOT NULL," +
+                "   email TEXT PRIMARY KEY NOT NULL ," +
                 "   imagen TEXT DEFAULT NULL," +
                 "   fecNacimiento DATETIME DEFAULT NULL," +
                 "   estatura INTEGER DEFAULT NULL," +

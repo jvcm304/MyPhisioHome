@@ -123,8 +123,9 @@ public class DialogAddPaciente extends DialogFragment {
             @Override
             public void onClick(View view) {
 
-                Intent i=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i,SELECTED_PICTURE);
+                    Intent i=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(i,SELECTED_PICTURE);
+
             }
 
         });
@@ -135,7 +136,7 @@ public class DialogAddPaciente extends DialogFragment {
                 if(checkDatos()){
                     long result=addPaciente();
                     //Log.e("resultado----",Integer.toString(result));
-                    Toast.makeText(getActivity(),"Paciente guardado correctamente",Toast.LENGTH_LONG).show();
+
                     startActivity(new Intent(getActivity(), AdministradorActivity.class));
 
                 }
@@ -203,27 +204,31 @@ public class DialogAddPaciente extends DialogFragment {
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         DialogAddPaciente.super.onActivityResult(requestCode,resultCode,data);
+        try{
+            switch (requestCode){
+                case SELECTED_PICTURE:
+                    Uri uri=data.getData();
+                    String[]projection={MediaStore.Images.Media.DATA};
 
-        switch (requestCode){
-            case SELECTED_PICTURE:
-                Uri uri=data.getData();
-                String[]projection={MediaStore.Images.Media.DATA};
+                    Cursor cursor=getActivity().getContentResolver().query(uri,projection,null,null,null);
+                    cursor.moveToFirst();
 
-                Cursor cursor=getActivity().getContentResolver().query(uri,projection,null,null,null);
-                cursor.moveToFirst();
+                    int columIndex=cursor.getColumnIndex(projection[0]);
+                    filePath=cursor.getString(columIndex);
+                    cursor.close();
+                    Bitmap yourSlectedImage=BitmapFactory.decodeFile(filePath);
 
-                int columIndex=cursor.getColumnIndex(projection[0]);
-                filePath=cursor.getString(columIndex);
-                cursor.close();
-                Bitmap yourSlectedImage=BitmapFactory.decodeFile(filePath);
+                    d=resizeImage(yourSlectedImage);//new BitmapDrawable(yourSlectedImage);
+                    mImageButton.setImageDrawable(d);
+                    break;
+                default:
 
-                d=resizeImage(yourSlectedImage);//new BitmapDrawable(yourSlectedImage);
-                mImageButton.setImageDrawable(d);
-                break;
-            default:
+                    break;
+            }
+        }catch (NullPointerException e){
 
-                break;
         }
+
     }
 
     private Drawable resizeImage(Bitmap yourSlectedImage) {

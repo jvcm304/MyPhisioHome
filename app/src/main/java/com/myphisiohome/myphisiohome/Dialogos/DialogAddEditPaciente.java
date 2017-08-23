@@ -98,6 +98,7 @@ public class DialogAddEditPaciente extends DialogFragment {
         mSexo = (Spinner) view.findViewById(R.id.et_sexo);
         SharedPreferences prefs = getActivity().getSharedPreferences("MYPHISIO_PREFS", Context.MODE_PRIVATE);
         mEmail.setText(prefs.getString("PREF_PACIENTE_EMAIL",""));
+        mEmail.setEnabled(false);
         mNombre.setText(prefs.getString("PREF_PACIENTE_NAME",""));
         mEstatura.setText(Integer.toString(prefs.getInt("PREF_PACIENTE_ESTATURA",0)));
         idPaciente=prefs.getInt("PREF_PACIENTE_ID",-1);
@@ -126,8 +127,10 @@ public class DialogAddEditPaciente extends DialogFragment {
             @Override
             public void onClick(View view) {
 
-                Intent i=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(i,SELECTED_PICTURE);
+                    Intent i=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(i,SELECTED_PICTURE);
+
+
             }
 
         });
@@ -167,31 +170,32 @@ public class DialogAddEditPaciente extends DialogFragment {
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         DialogAddEditPaciente.super.onActivityResult(requestCode,resultCode,data);
+        try {
+            switch (requestCode){
+                case SELECTED_PICTURE:
 
-        switch (requestCode){
-            case SELECTED_PICTURE:
-                try {
-                    Uri uri=data.getData();
-                    String[]projection={MediaStore.Images.Media.DATA};
+                        Uri uri=data.getData();
+                        String[]projection={MediaStore.Images.Media.DATA};
 
-                    Cursor cursor=getActivity().getContentResolver().query(uri,projection,null,null,null);
-                    cursor.moveToFirst();
+                        Cursor cursor=getActivity().getContentResolver().query(uri,projection,null,null,null);
+                        cursor.moveToFirst();
 
-                    int columIndex=cursor.getColumnIndex(projection[0]);
-                    filePath=cursor.getString(columIndex);
-                    cursor.close();
-                    Bitmap yourSlectedImage=BitmapFactory.decodeFile(filePath);
+                        int columIndex=cursor.getColumnIndex(projection[0]);
+                        filePath=cursor.getString(columIndex);
+                        cursor.close();
+                        Bitmap yourSlectedImage=BitmapFactory.decodeFile(filePath);
 
-                    d=resizeImage(yourSlectedImage);//new BitmapDrawable(yourSlectedImage);
-                    mImageButton.setImageDrawable(d);
-                }catch (NullPointerException e){
+                        d=resizeImage(yourSlectedImage);//new BitmapDrawable(yourSlectedImage);
+                        mImageButton.setImageDrawable(d);
 
-                }
 
-                break;
-            default:
+                    break;
+                default:
 
-                break;
+                    break;
+            }
+        }catch (NullPointerException e){
+
         }
     }
 

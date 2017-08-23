@@ -41,8 +41,11 @@ public class AddPacienteServidor extends AsyncTask<Void, Object, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        Log.e("resultado: :",result);
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        //Log.e("resultado: :",result);
+        if(result!=null){
+            Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        }
+
     }
 
     @Override
@@ -77,21 +80,22 @@ public class AddPacienteServidor extends AsyncTask<Void, Object, String> {
                 estado = respJSON.getInt("estado");
                 httpclient.getConnectionManager().shutdown();
                 if (resp.getStatusLine().getStatusCode() == 200){//Status = OK
-                    return ("Se ha creado el paciente correctamente");
+                    return (null);
                 }
                 else{
-                    return ("Error al crear el paciente (1)");
+                    //Toast.makeText(context, "El Email introducido ya existe", Toast.LENGTH_LONG).show();
+                    return ("El Email introducido ya existe");
                 }
 
             }catch (JSONException e){
                 Log.e("ServicioRest","Error!", e);
-                return ("Error al crear el paciente (2)");
+                return (null);
 
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ("Error al modificar el paciente (3)");
+            return (null);
         }
 
     }

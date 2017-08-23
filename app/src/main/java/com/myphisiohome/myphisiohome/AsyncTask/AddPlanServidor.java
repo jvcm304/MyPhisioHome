@@ -41,7 +41,7 @@ public class AddPlanServidor extends AsyncTask<Void, Object, String> {
     @Override
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 
     @Override

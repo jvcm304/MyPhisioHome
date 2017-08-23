@@ -38,7 +38,7 @@ public class DeletePlanServidor extends AsyncTask<Void, Object, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
         Log.e("resultado: :",result);
-        Toast.makeText(context, result, Toast.LENGTH_LONG).show();
+        //Toast.makeText(context, result, Toast.LENGTH_LONG).show();
     }
 
     @Override

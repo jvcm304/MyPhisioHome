@@ -147,6 +147,7 @@ public class FragmentPlan extends Fragment {
 
         }else if(aux==3){
             auxEjercicio=0;
+            fad_add.hide();
             fad_add.setEnabled(false);
             fab.setOnClickListener(
                     new View.OnClickListener() {
